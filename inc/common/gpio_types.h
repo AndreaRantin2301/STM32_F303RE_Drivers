@@ -53,4 +53,14 @@ typedef enum {
     GPIO_MODE_ANALOG,
 }GPIOMode;
 
+/**
+ * @brief Status code for all GPIO operations
+ * 
+ */
+typedef enum {
+    GPIO_OK,
+    GPIO_INVALID_PORT,
+    GPIO_INVAID_PIN,
+}GPIOStatusCode;
+
 #endif
