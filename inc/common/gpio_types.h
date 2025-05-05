@@ -54,6 +54,29 @@ typedef enum {
 }GPIOMode;
 
 /**
+ * @brief Enum representing all the alternate functions of a GPIO
+ * 
+ */
+typedef enum {
+    GPIO_AF0,
+    GPIO_AF1,
+    GPIO_AF2,
+    GPIO_AF3,
+    GPIO_AF4,
+    GPIO_AF5,
+    GPIO_AF6,
+    GPIO_AF7,
+    GPIO_AF8,
+    GPIO_AF9,
+    GPIO_AF10,
+    GPIO_AF11,
+    GPIO_AF12,
+    GPIO_AF13,
+    GPIO_AF14,
+    GPIO_AF15,
+}GPIOAlternateFunction;
+
+/**
  * @brief Status code for all GPIO operations
  * 
  */
