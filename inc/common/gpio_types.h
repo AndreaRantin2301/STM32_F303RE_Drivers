@@ -77,6 +77,15 @@ typedef enum {
 }GPIOAlternateFunction;
 
 /**
+ * @brief State assignable to a GPIO pin.
+ * 
+ */
+typedef enum {
+    GPIO_STATE_RESET,
+    GPIO_STATE_SET,
+}GPIOState;
+
+/**
  * @brief Status code for all GPIO operations
  * 
  */
