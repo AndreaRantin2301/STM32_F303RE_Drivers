@@ -15,12 +15,14 @@ typedef struct {
     uint16_t afMask;
 }GPIOAFValidationEntry;
 
+
 //TODO OTHER PORTS
 /**
  * @brief Validation table for GPIO Alternate Function
  * 
  */
 static const GPIOAFValidationEntry AFValidationTable[] = {
+    //GPIO port A
     {GPIO_PORT_A,GPIO_PIN_0, (0x01U << 1) | (0x01U << 3) | (0x01U << 7) | (0x01U << 8) | (0x01U << 9) | (0x01U << 10) | (0x01U << 15)},
     {GPIO_PORT_A,GPIO_PIN_1, (0x01U << 0) | (0x01U << 1) | (0x01U << 3) | (0x01U << 7) | (0x01U << 9) | (0x01U << 15)},
     {GPIO_PORT_A,GPIO_PIN_2, (0x01U << 1) | (0x01U << 3) | (0x01U << 7) | (0x01U << 8) | (0x01U << 9) | (0x01U << 15)},
@@ -37,6 +39,19 @@ static const GPIOAFValidationEntry AFValidationTable[] = {
     {GPIO_PORT_A,GPIO_PIN_13,(0x01U << 0) | (0x01U << 1) | (0x01U << 3) | (0x01U << 5) | (0x01U << 7) | (0x01U << 11) | (0x01U << 15)},
     {GPIO_PORT_A,GPIO_PIN_14,(0x01U << 0) | (0x01U << 3) | (0x01U << 4) | (0x01U << 5) | (0x01U << 6) | (0x01U << 7) | (0x01U << 15)},
     {GPIO_PORT_A,GPIO_PIN_15,(0x01U << 0) | (0x01U << 1) | (0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 5) | (0x01U << 6) | (0x01U << 7) | (0x01U << 9) | (0x01U << 15)},
+
+    //GPIO port B
+    {GPIO_PORT_B,GPIO_PIN_0,(0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 6) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_1,(0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 6) | (0x01U << 8) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_2,(0x01U << 3) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_3,(0x01U << 0) | (0x01U << 1) | (0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 5) | (0x01U << 6) | (0x01U << 7) | (0x01U << 10) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_4,(0x01U << 0) | (0x01U << 1) | (0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 5) | (0x01U << 6) | (0x01U << 7) | (0x01U << 10) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_5,(0x01U << 1) | (0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 5) | (0x01U << 6) | (0x01U << 7) | (0x01U << 8) | (0x01U << 10) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_6,(0x01U << 1) | (0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 5) | (0x01U << 6) | (0x01U << 7) | (0x01U << 10) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_7,(0x01U << 1) | (0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 5) | (0x01U << 7) | (0x01U << 10) | (0x01U << 12) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_8,(0x01U << 1) | (0x01U << 2) | (0x01U << 3) | (0x01U << 4) | (0x01U << 7) | (0x01U << 8) | (0x01U << 9) | (0x01U << 10) | (0x01U << 12) | (0x01U << 15)},
+    {GPIO_PORT_B,GPIO_PIN_9,(0x01U << 1) | (0x01U << 2) | (0x01U << 4) | (0x01U << 6) | (0x01U << 7) | (0x01U << 8) | (0x01U << 9) | (0x01U << 10) | (0x01U << 15)},
+    //TODO CONTINUE
 };
 
 #endif

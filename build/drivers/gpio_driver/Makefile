@@ -1,5 +1,4 @@
-# DIRECTORIES
-#TODO SISTEMARE
+# General directories
 STARTUP_DIR = ../../../startup
 SRC_DIR = ../../../src
 INC_DIR = ../../../inc
