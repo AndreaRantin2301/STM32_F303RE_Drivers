@@ -1,10 +1,10 @@
 #include "drivers/gpio_driver/gpio_driver_test.h"
 
-GPIO_TypeDef mockGpio = {0};
+GPIO_TypeDef mockGpioList[GPIO_MOCK_N] = {{0}};
 
 void setUp(void)
 {
-    memset(&mockGpio, 0, sizeof(GPIO_TypeDef));
+    memset(&mockGpioList, 0, sizeof(mockGpioList));
 }
 
 void tearDown(void)
@@ -22,6 +22,7 @@ int main(void) {
     RUN_TEST(Test_GPIO_Toggle);
     RUN_TEST(Test_GPIO_Write);
     RUN_TEST(Test_GPIO_Read);
+    RUN_TEST(Test_GPIO_Set_Alternate_Function);
 
     return UNITY_END();
 }
