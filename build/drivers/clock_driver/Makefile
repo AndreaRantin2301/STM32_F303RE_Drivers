@@ -47,17 +47,20 @@ clock_main.o:$(SRC_DIR)/clock_main.c | $(OUT_DIR)
 startup.o:$(STARTUP_DIR)/startup.s | $(OUT_DIR)
 	$(Compiler) $(CFlags) $(STARTUP_DIR)/startup.s -o $(OUT_DIR)/startup.o
 
-test_clock_impl.o:$(CLOCK_DRIVER_DIR)/test_clock_impl.c | $(OUT_DIR)
-	$(Compiler) $(CFlags) $(CLOCK_DRIVER_DIR)/test_clock_impl.c -o $(OUT_DIR)/test_clock_impl.o
+clock_driver.o:$(CLOCK_DRIVER_DIR)/clock_driver.c | $(OUT_DIR)
+	$(Compiler) $(CFlags) -DCLOCK_INTERNAL $(CLOCK_DRIVER_DIR)/clock_driver.c -o $(OUT_DIR)/clock_driver.o
+
+systick_driver.o:$(CLOCK_DRIVER_DIR)/systick_driver.c | $(OUT_DIR)
+	$(Compiler) $(CFlags) -DCLOCK_INTERNAL $(CLOCK_DRIVER_DIR)/systick_driver.c -o $(OUT_DIR)/systick_driver.o
 
 
 $(DEBUG_DIR)/firmware.elf: $(FIRMWARE_SRC) | $(DEBUG_DIR)
 	$(Compiler) $(LDFlags) -o $@ $^
 	arm-none-eabi-objcopy -O binary $@ $(DEBUG_DIR)/firmware.bin
 
-all: clock_main.o startup.o test_clock_impl.o $(DEBUG_DIR)/firmware.elf
+all: clock_main.o startup.o clock_driver.o systick_driver.o $(DEBUG_DIR)/firmware.elf
 
-driver: clock_driver.o
+driver: clock_driver.o systick_driver.o
 
 run_tests: | $(DEBUG_DIR)
 	$(TestCompiler) $(TestFlags) $(TEST_SRC) -o $(DEBUG_DIR)/unit_tests.exe
