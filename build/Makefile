@@ -6,14 +6,15 @@ THIRD_PARTY_DIR = ../third_party
 UNITY_DIR = $(THIRD_PARTY_DIR)/UNITY
 OUT_DIR = out
 DEBUG_DIR = debug
-FIRMWARE_SRC = drivers/clock_driver/$(OUT_DIR)/clock_driver.o drivers/clock_driver/$(OUT_DIR)/systick_driver.o \
-				drivers/gpio_driver/$(OUT_DIR)/gpio_driver.o drivers/flash_driver/$(OUT_DIR)/flash_driver.o \
-				 $(OUT_DIR)/startup.o $(OUT_DIR)/main.o
-
 DRIVERS_DIR = drivers
 GPIO_DRIVER_MAKE_DIR = $(DRIVERS_DIR)/gpio_driver
 CLOCK_DRIVER_MAKE_DIR = $(DRIVERS_DIR)/clock_driver
 FLASH_DRIVER_MAKE_DIR = $(DRIVERS_DIR)/flash_driver
+
+
+FIRMWARE_SRC = $(CLOCK_DRIVER_MAKE_DIR)/$(OUT_DIR)/clock_driver.o $(CLOCK_DRIVER_MAKE_DIR)/$(OUT_DIR)/systick_driver.o \
+				$(GPIO_DRIVER_MAKE_DIR)/$(OUT_DIR)/gpio_driver.o $(FLASH_DRIVER_MAKE_DIR)/$(OUT_DIR)/flash_driver.o \
+				 $(OUT_DIR)/startup.o $(OUT_DIR)/main.o
 
 Compiler = arm-none-eabi-gcc
 CFlags = -c -mcpu=cortex-m4 -I$(INC_DIR) -I$(THIRD_PARTY_DIR) -mthumb -std=gnu23 -mfloat-abi=soft -g -O2 \
@@ -69,3 +70,6 @@ clean:
 	rmdir /S /Q $(DEBUG_DIR) 2>nul || exit 0
 	rmdir /S /Q $(OUT_DIR) 2>nul || exit 0
 	del /Q *.o *.elf *.map 2>nul || exit 0
+
+size:
+	arm-none-eabi-size $(DEBUG_DIR)/firmware.elf
