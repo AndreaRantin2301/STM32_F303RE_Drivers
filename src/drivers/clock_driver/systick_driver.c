@@ -1,5 +1,7 @@
 #include "drivers/clock_driver/systick_driver.h"
+#define CLOCK_INTERNAL_USE
 #include "drivers/clock_driver/clock_internal.h"
+#undef CLOCK_INTERNAL_USE
 #include "ST/stm32f303xe.h"
 
 volatile uint32_t currentTick = 0;

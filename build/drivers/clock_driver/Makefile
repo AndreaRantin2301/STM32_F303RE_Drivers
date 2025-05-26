@@ -12,6 +12,11 @@ DEBUG_DIR = debug
 DRIVERS_DIR = $(SRC_DIR)/drivers
 CLOCK_DRIVER_DIR = $(DRIVERS_DIR)/clock_driver
 
+# Unit test code directories
+TEST_RUNNERS_DIR = $(TEST_DIR)/runners
+DRIVERS_TEST_DIR = $(TEST_DIR)/drivers
+CLOCK_DRIVER_TEST_DIR = $(DRIVERS_TEST_DIR)/clock_driver
+
 
 Compiler = arm-none-eabi-gcc
 CFlags = -c -mcpu=cortex-m4 -I$(INC_DIR) -I$(THIRD_PARTY_DIR) -mthumb -std=gnu23 -mfloat-abi=soft -g -O2 \
@@ -34,6 +39,9 @@ TestCompiler=gcc
 TestFlags = -DUNITY_MAIN -DUNIT_TEST -I$(INC_DIR) -I$(THIRD_PARTY_DIR) -I$(TEST_DIR)
 
 FIRMWARE_SRC = $(OUT_DIR)/startup.o $(OUT_DIR)/clock_main.o
+TEST_SRC = $(UNITY_DIR)/unity.c $(TEST_RUNNERS_DIR)/clock_test_runner.c \
+		   $(CLOCK_DRIVER_TEST_DIR)/clock_driver_test.c $(CLOCK_DRIVER_DIR)/clock_driver.c \
+		   $(CLOCK_DRIVER_TEST_DIR)/systick_driver_test.c $(CLOCK_DRIVER_DIR)/systick_driver.c
 
 $(OUT_DIR):
 	mkdir $@

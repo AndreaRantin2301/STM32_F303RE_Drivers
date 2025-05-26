@@ -1,7 +1,7 @@
 #ifndef CLOCK_INTERNAL_H
 #define CLOCK_INTERNAL_H
 
-#ifndef CLOCK_INTERNAL
+#ifndef CLOCK_INTERNAL_USE
 #error "clock_internal.h is private clock functionality and can only be included by clock_driver.c"
 #endif
 

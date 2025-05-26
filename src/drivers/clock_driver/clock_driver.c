@@ -1,5 +1,7 @@
 #include "drivers/clock_driver/clock_driver.h"
+#define CLOCK_INTERNAL_USE
 #include "drivers/clock_driver/clock_internal.h"
+#undef CLOCK_INTERNAL_USE
 #include "drivers/clock_driver/clock_flash_interface.h"
 
 ClockStatusCode System_Clock_Init(void) {

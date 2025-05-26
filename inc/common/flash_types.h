@@ -11,4 +11,13 @@ typedef enum {
     FLASH_LATENCY_TWO_WAIT,
 }FlashLatency;
 
+/**
+ * @brief Status code for all FLASH operations
+ * 
+ */
+typedef enum {
+    FLASH_OK,
+    FLASH_INVALID_LATENCY,
+}FlashStatusCode;
+
 #endif

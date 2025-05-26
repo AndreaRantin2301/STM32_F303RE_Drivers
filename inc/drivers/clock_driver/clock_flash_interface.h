@@ -3,6 +3,6 @@
 
 #include "common/flash_types.h"
 
-void Flash_Set_Latency(FlashLatency latency);
+FlashStatusCode Flash_Set_Latency(FlashLatency latency);
 
 #endif
