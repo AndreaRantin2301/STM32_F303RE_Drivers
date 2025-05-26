@@ -73,3 +73,39 @@ ClockStatusCode System_Clock_Init(void) {
 
     return CLOCK_OK;
 }
+
+ClockStatusCode GPIO_Clock_Enable(GPIOPortEnum portEnum) {
+
+    RCC_TypeDef* rcc = Get_RCC();
+
+     switch(portEnum) {
+        case GPIO_PORT_A:
+            rcc->AHBENR |= RCC_AHBENR_GPIOAEN;
+            break;
+        case GPIO_PORT_B:
+            rcc->AHBENR |= RCC_AHBENR_GPIOBEN;
+            break;
+        case GPIO_PORT_C:
+            rcc->AHBENR |= RCC_AHBENR_GPIOCEN;
+            break;
+        case GPIO_PORT_D:
+            rcc->AHBENR |= RCC_AHBENR_GPIODEN;
+            break;
+        case GPIO_PORT_E:
+            rcc->AHBENR |= RCC_AHBENR_GPIOEEN;
+            break;
+        case GPIO_PORT_F:
+            rcc->AHBENR |= RCC_AHBENR_GPIOFEN;
+            break;
+        case GPIO_PORT_G:
+            rcc->AHBENR |= RCC_AHBENR_GPIOGEN;
+            break;
+        case GPIO_PORT_H:
+            rcc->AHBENR |= RCC_AHBENR_GPIOHEN;
+            break;
+        default:
+            return CLOCK_ERROR_GPIO_CLOCK;
+    }
+
+    return CLOCK_OK;
+}

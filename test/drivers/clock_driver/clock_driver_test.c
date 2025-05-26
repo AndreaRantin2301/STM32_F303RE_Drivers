@@ -65,6 +65,7 @@ void Test_System_Clock_Init() {
     MOCK_IS_PLL_SELECTED = true;
     check = System_Clock_Init();
 
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test System_Clock_Init OK failed\n");
     TEST_ASSERT_EQUAL_MESSAGE(0x01,(mockRcc.CR & RCC_CR_HSION_Msk),"Test System_Clock_Init error HSI ON bit\n");
     TEST_ASSERT_EQUAL_MESSAGE(RCC_CFGR_PLLSRC_HSI_PREDIV,(mockRcc.CFGR & RCC_CFGR_PLLSRC_Msk), "Test System_Clock_Init error HSI PREDIV\n");
     TEST_ASSERT_EQUAL_MESSAGE(RCC_CFGR2_PREDIV_DIV1,(mockRcc.CFGR2 & RCC_CFGR2_PREDIV_Msk), "Test System_Clock_Init error PREDIV value\n");
@@ -75,4 +76,44 @@ void Test_System_Clock_Init() {
     TEST_ASSERT_EQUAL_MESSAGE(RCC_CFGR_PPRE2_DIV1, (mockRcc.CFGR & RCC_CFGR_PPRE2_Msk), "Test System_Clock_Init error APB2 PRESCALER\n");
     TEST_ASSERT_EQUAL_MESSAGE(RCC_CFGR_SW_PLL, (mockRcc.CFGR & RCC_CFGR_SW_Msk), "Test System_Clock_Init error CLOCK SOURCE\n");
 
+}
+
+void Test_GPIO_Clock_Enable() {
+    //Test invalid port
+    ClockStatusCode check = GPIO_Clock_Enable(-10);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_ERROR_GPIO_CLOCK,check, "Test GPIO_Clock_Enable error GPIO clock failed\n");
+
+
+    //Test all valid ports
+    check = GPIO_Clock_Enable(GPIO_PORT_A);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test GPIO_Clock_Enable OK GPIO clock failed\n");
+    TEST_ASSERT_EQUAL_MESSAGE(RCC_AHBENR_GPIOAEN,(mockRcc.AHBENR & RCC_AHBENR_GPIOAEN_Msk), "Test GPIO_Clock_Enable port A failed\n");
+
+    check = GPIO_Clock_Enable(GPIO_PORT_B);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test GPIO_Clock_Enable OK GPIO clock failed\n");
+    TEST_ASSERT_EQUAL_MESSAGE(RCC_AHBENR_GPIOBEN,(mockRcc.AHBENR & RCC_AHBENR_GPIOBEN_Msk), "Test GPIO_Clock_Enable port B failed\n");
+
+    check = GPIO_Clock_Enable(GPIO_PORT_C);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test GPIO_Clock_Enable OK GPIO clock failed\n");
+    TEST_ASSERT_EQUAL_MESSAGE(RCC_AHBENR_GPIOCEN,(mockRcc.AHBENR & RCC_AHBENR_GPIOCEN_Msk), "Test GPIO_Clock_Enable port C failed\n");
+
+    check = GPIO_Clock_Enable(GPIO_PORT_D);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test GPIO_Clock_Enable OK GPIO clock failed\n");
+    TEST_ASSERT_EQUAL_MESSAGE(RCC_AHBENR_GPIODEN,(mockRcc.AHBENR & RCC_AHBENR_GPIODEN_Msk), "Test GPIO_Clock_Enable port D failed\n");
+
+    check = GPIO_Clock_Enable(GPIO_PORT_E);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test GPIO_Clock_Enable OK GPIO clock failed\n");
+    TEST_ASSERT_EQUAL_MESSAGE(RCC_AHBENR_GPIOEEN,(mockRcc.AHBENR & RCC_AHBENR_GPIOEEN_Msk), "Test GPIO_Clock_Enable port E failed\n");
+
+    check = GPIO_Clock_Enable(GPIO_PORT_F);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test GPIO_Clock_Enable OK GPIO clock failed\n");
+    TEST_ASSERT_EQUAL_MESSAGE(RCC_AHBENR_GPIOFEN,(mockRcc.AHBENR & RCC_AHBENR_GPIOFEN_Msk), "Test GPIO_Clock_Enable port F failed\n");
+
+    check = GPIO_Clock_Enable(GPIO_PORT_G);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test GPIO_Clock_Enable OK GPIO clock failed\n");
+    TEST_ASSERT_EQUAL_MESSAGE(RCC_AHBENR_GPIOGEN,(mockRcc.AHBENR & RCC_AHBENR_GPIOGEN_Msk), "Test GPIO_Clock_Enable port G failed\n");
+
+    check = GPIO_Clock_Enable(GPIO_PORT_H);
+    TEST_ASSERT_EQUAL_MESSAGE(CLOCK_OK,check, "Test GPIO_Clock_Enable OK GPIO clock failed\n");
+    TEST_ASSERT_EQUAL_MESSAGE(RCC_AHBENR_GPIOHEN,(mockRcc.AHBENR & RCC_AHBENR_GPIOHEN_Msk), "Test GPIO_Clock_Enable port H failed\n");
 }
