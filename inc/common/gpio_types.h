@@ -97,4 +97,15 @@ typedef enum {
     GPIO_INVALID_AF,
 }GPIOStatusCode;
 
+/**
+ * @brief Initialization structure for GPIO
+ * 
+ */
+typedef struct {
+    GPIOPortEnum portEnum;
+    GPIOPinEnum pinEnum;
+    GPIOMode mode;
+    GPIOAlternateFunction *af;
+}GPIO_Init_Struct;
+
 #endif
