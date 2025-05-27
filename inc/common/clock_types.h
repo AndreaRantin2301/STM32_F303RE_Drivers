@@ -30,7 +30,7 @@ typedef enum {
 }ClockSource;
 
 typedef enum {
-    PLL_MUL_2,
+    PLL_MUL_2 = 2,
     PLL_MUL_3,
     PLL_MUL_4,
     PLL_MUL_5,
@@ -48,7 +48,7 @@ typedef enum {
 }ClockPLLMul;
 
 typedef enum {
-    PREDIV_1,
+    PREDIV_1 = 1,
     PREDIV_2,
     PREDIV_3,
     PREDIV_4,
@@ -68,30 +68,30 @@ typedef enum {
 
 typedef enum {
     AHB_PRE_NONE,
-    AHB_PRE_2,
-    AHB_PRE_4,
-    AHB_PRE_8,
-    AHB_PRE_16,
-    AHB_PRE_64,
-    AHB_PRE_128,
-    AHB_PRE_256,
-    AHB_PRE_512,
+    AHB_PRE_2 = 2,
+    AHB_PRE_4 = 4,
+    AHB_PRE_8 = 8,
+    AHB_PRE_16 = 16,
+    AHB_PRE_64 = 64,
+    AHB_PRE_128 = 128,
+    AHB_PRE_256 = 256,
+    AHB_PRE_512 = 512,
 }ClockAHBPrescaler;
 
 typedef enum {
     APB1_PRE_NONE,
-    APB1_PRE_2,
-    APB1_PRE_4,
-    APB1_PRE_8,
-    APB1_PRE_16,
+    APB1_PRE_2 = 2,
+    APB1_PRE_4 = 4,
+    APB1_PRE_8 = 8,
+    APB1_PRE_16 = 16,
 }ClockAPB1Prescaler;
 
 typedef enum {
     APB2_PRE_NONE,
-    APB2_PRE_2,
-    APB2_PRE_4,
-    APB2_PRE_8,
-    APB2_PRE_16,
+    APB2_PRE_2 = 2,
+    APB2_PRE_4 = 4,
+    APB2_PRE_8 = 8,
+    APB2_PRE_16 = 16,
 }ClockAPB2Prescaler;
 
 typedef enum {
