@@ -87,8 +87,15 @@ typedef enum {
     APB2_PRE_16,
 }ClockAPB2Prescaler;
 
+typedef enum {
+    PLL_SRC_HSI_HALF,
+    PLL_SRC_HSI,
+    PLL_SRC_HSE,
+}ClockPLLSrc;
+
 typedef struct {
     ClockSource source;
+    ClockPLLSrc pllSrc;
     ClockPrediv prediv;
     ClockPLLMul pllMul;
     ClockAHBPrescaler ahbPre;
