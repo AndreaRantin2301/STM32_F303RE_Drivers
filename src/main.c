@@ -22,7 +22,7 @@ int main(void) {
     }
 
     //Initialize systick with a 1ms trigger
-    SysTick_Init();
+    SysTick_Init(1000);
 
     GPIO_Init_Struct gpioInitStruct = {0};
 
