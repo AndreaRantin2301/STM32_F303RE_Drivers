@@ -112,11 +112,11 @@ typedef struct {
 }ClockInitStruct;
 
 typedef struct {
-    uint32_t systemClock = 0;
-    uint32_t hseClock = 0;
-    uint32_t ahbClock = 0;
-    uint32_t apb1Clock = 0;
-    uint32_t apb2Clock = 0;
+    uint32_t systemClock;
+    uint32_t hseClock;
+    uint32_t ahbClock;
+    uint32_t apb1Clock;
+    uint32_t apb2Clock;
 }ClockFrequencies;
 
 #endif
