@@ -28,6 +28,7 @@ int main(void) {
 
     RUN_TEST(Test_System_Clock_Init);
     RUN_TEST(Test_SysTick_Init);
+    RUN_TEST(Test_GPIO_Clock_Enable);
 
     return UNITY_END();
 }

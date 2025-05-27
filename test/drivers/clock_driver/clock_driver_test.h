@@ -16,4 +16,11 @@
  */
 void Test_System_Clock_Init();
 
+/**
+ * @brief Tests the GPIO_Clock_Enable function from
+ * clock_driver.c with all possible ports
+ * 
+ */
+void Test_GPIO_Clock_Enable();
+
 #endif
