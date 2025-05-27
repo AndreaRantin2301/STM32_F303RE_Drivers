@@ -101,14 +101,14 @@ typedef enum {
 }ClockPLLSrc;
 
 typedef struct {
-    ClockSource source;
-    ClockPLLSrc pllSrc;
-    ClockPrediv prediv;
-    ClockPLLMul pllMul;
-    ClockAHBPrescaler ahbPre;
-    ClockAPB1Prescaler apb1Pre;
-    ClockAPB2Prescaler apb2Pre;
-    FlashLatency flashLatency;
+    volatile ClockSource source;
+    volatile ClockPLLSrc pllSrc;
+    volatile ClockPrediv prediv;
+    volatile ClockPLLMul pllMul;
+    volatile ClockAHBPrescaler ahbPre;
+    volatile ClockAPB1Prescaler apb1Pre;
+    volatile ClockAPB2Prescaler apb2Pre;
+    volatile FlashLatency flashLatency;
 }ClockInitStruct;
 
 #endif
