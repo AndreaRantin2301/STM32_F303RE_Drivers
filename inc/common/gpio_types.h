@@ -95,6 +95,7 @@ typedef enum {
     GPIO_INVAID_PIN,
     GPIO_INVALID_MODE,
     GPIO_INVALID_AF,
+    GPIO_INIT_ERROR,
 }GPIOStatusCode;
 
 /**
