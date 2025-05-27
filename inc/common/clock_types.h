@@ -48,7 +48,7 @@ typedef enum {
 }ClockPLLMul;
 
 typedef enum {
-    PREDIV_1,
+    PREDIV_1 = 1,
     PREDIV_2,
     PREDIV_3,
     PREDIV_4,
