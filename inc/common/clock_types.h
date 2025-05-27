@@ -30,7 +30,7 @@ typedef enum {
 }ClockSource;
 
 typedef enum {
-    PLL_MUL_2,
+    PLL_MUL_2 = 2,
     PLL_MUL_3,
     PLL_MUL_4,
     PLL_MUL_5,
