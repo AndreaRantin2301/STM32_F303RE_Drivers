@@ -3,6 +3,7 @@
 
 #include "common/clock_types.h"
 #include "common/gpio_types.h"
+#include <stdint.h>
 
 /**
 * @brief Initializes System clock at 72Mhz and also some peripheral clocks
@@ -18,5 +19,8 @@ ClockStatusCode System_Clock_Init(ClockInitStruct clockStruct);
 * @return ClockStatusCode CLOCK_OK if successfull
 */
 ClockStatusCode GPIO_Clock_Enable(GPIOPortEnum portEnum);
+
+void Set_System_Clock(uint32_t clock);
+void Set_HSE_Clock(uint32_t clock);
 
 #endif

@@ -4,6 +4,12 @@
 #undef CLOCK_INTERNAL_USE
 #include "drivers/clock_driver/clock_flash_interface.h"
 
+uint32_t systemClock = 0;
+uint32_t hseClock = 0;
+uint32_t ahbClock = 0;
+uint32_t apb1Clock = 0;
+uint32_t apb2Clock = 0;
+
 static ClockStatusCode Set_Clock_Source(ClockSource source) {
 
     RCC_TypeDef* rcc = Get_RCC();
@@ -278,6 +284,41 @@ static ClockStatusCode Set_APB2_Prescaler(ClockAPB2Prescaler prescaler) {
     return CLOCK_OK;
 }
 
+
+static void Calculate_System_Clock(ClockInitStruct clockStruct) {
+    switch(clockStruct.source) {
+        case CLOCK_SOURCE_HSI:
+            systemClock = 8000000;
+            break;
+        case CLOCK_SOURCE_HSE:
+            systemClock = hseClock;
+            break;
+        case CLOCK_SOURCE_PLL:
+            switch(clockStruct.pllSrc) {
+                case PLL_SRC_HSI_HALF:
+                    systemClock = (uint32_t) ((4000000 / clockStruct.prediv) * clockStruct.pllMul);
+                    break;
+                case PLL_SRC_HSI:
+                    systemClock = (uint32_t) ((8000000 / clockStruct.prediv) * clockStruct.pllMul);
+                    break;
+                case PLL_SRC_HSE:
+                    systemClock = hseClock;
+                    //Assuming HSE clock was set beforehand
+                    systemClock /= clockStruct.prediv;
+                    systemClock *= clockStruct.pllMul;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        default:
+            break;
+    }
+    ahbClock = systemClock / clockStruct.ahbPre;
+    apb1Clock = systemClock / clockStruct.apb1Pre;
+    apb2Clock = systemClock / clockStruct.apb2Pre;
+}
+
 ClockStatusCode System_Clock_Init(ClockInitStruct clockStruct) {
     RCC_TypeDef* rcc = Get_RCC();
 
@@ -338,6 +379,8 @@ ClockStatusCode System_Clock_Init(ClockInitStruct clockStruct) {
 
     if(!IS_PLL_SELECTED()) return CLOCK_ERROR_CLOCK_SOURCE;
 
+    Calculate_System_Clock(clockStruct);
+
     return CLOCK_OK;
 }
 
@@ -375,4 +418,12 @@ ClockStatusCode GPIO_Clock_Enable(GPIOPortEnum portEnum) {
     }
 
     return CLOCK_OK;
+}
+
+void Set_System_Clock(uint32_t clock) {
+    systemClock = clock;
+}
+
+void Set_HSE_Clock(uint32_t clock) {
+    hseClock = clock;
 }
