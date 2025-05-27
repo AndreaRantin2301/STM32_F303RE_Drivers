@@ -5,10 +5,13 @@
 #error "clock_internal.h is private clock functionality and can only be included by clock_driver.c"
 #endif
 
+#include "common/clock_types.h"
 #include "ST/stm32f303xe.h"
 #include <stdbool.h>
 
 #define SYSTEM_CLOCK    72000000
+
+const ClockFrequencies *Get_Clock_Frequencies(void);
 
 #ifndef UNIT_TEST
 static inline RCC_TypeDef* Get_RCC(){return RCC;}

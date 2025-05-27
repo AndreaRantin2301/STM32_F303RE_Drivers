@@ -11,13 +11,18 @@ void SysTick_Handler(void)
     currentTick++;
 }
 
-void SysTick_Init(void) {
+ClockStatusCode SysTick_Init(uint32_t periodMs) {
 
     SysTick_Type* systick = Get_SysTick();
+
+    const ClockFrequencies *frequencies = Get_Clock_Frequencies();
+
+    if((frequencies->ahbClock % periodMs) != 0) return CLOCK_ERROR_SYSTICK_PERIOD;
     
-    systick->LOAD = (SYSTEM_CLOCK / 1000) - 1;
+    systick->LOAD = (frequencies->ahbClock / periodMs) - 1;
     systick->VAL = 0;
     systick->CTRL |= (SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk);
+    return CLOCK_OK;
 }
 
 uint32_t Get_CurrentTick(void) {

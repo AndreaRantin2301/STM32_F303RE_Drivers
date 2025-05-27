@@ -2,12 +2,13 @@
 #define SYSTICK_DRIVER_H
 
 #include <stdint.h>
+#include "common/clock_types.h"
 
 /**
  * @brief Initializes SysTick to count every 1ms
  * 
  */
-void SysTick_Init(void);
+ClockStatusCode SysTick_Init(uint32_t periodMs);
 
 /**
  * @brief Handler of SysTick. Triggers every 1ms
