@@ -17,8 +17,7 @@ ClockStatusCode SysTick_Init(uint32_t periodMs) {
 
     const ClockFrequencies *frequencies = Get_Clock_Frequencies();
 
-    //TODO CHANGE ERROR
-    if((frequencies->ahbClock % periodMs) != 0) return CLOCK_ERROR_CLOCK_SOURCE;
+    if((frequencies->ahbClock % periodMs) != 0) return CLOCK_ERROR_SYSTICK_PERIOD;
     
     systick->LOAD = (frequencies->ahbClock / periodMs) - 1;
     systick->VAL = 0;

@@ -22,6 +22,7 @@ typedef enum {
     CLOCK_ERROR_AHBPRE,
     CLOCK_ERROR_APB1PRE,
     CLOCK_ERROR_APB2PRE,
+    CLOCK_ERROR_SYSTICK_PERIOD,
 }ClockStatusCode;
 
 typedef enum {
