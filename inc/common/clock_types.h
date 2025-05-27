@@ -2,6 +2,7 @@
 #define CLOCK_TYPES_H
 
 #include "common/flash_types.h"
+#include <stdint.h>
 
 /**
  * @brief Status codes for clock operations
