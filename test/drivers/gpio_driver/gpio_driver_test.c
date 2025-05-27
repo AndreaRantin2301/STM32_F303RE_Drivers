@@ -244,3 +244,64 @@ void Test_GPIO_Read() {
         TEST_ASSERT_EQUAL_MESSAGE(0b00,bit,"GPIO READ RESET FAILED\n");
     }
 }
+
+void Test_GPIO_Init() {
+
+    GPIO_Init_Struct testStruct = {0};
+
+    //Test invalid port
+    testStruct.portEnum = -10;
+    testStruct.pinEnum = GPIO_PIN_5;
+    testStruct.mode = GPIO_MODE_OUTPUT;
+    testStruct.af = GPIO_AF4;
+
+    GPIOStatusCode check = GPIO_Init(testStruct);
+    TEST_ASSERT_EQUAL_MESSAGE(GPIO_INVALID_PORT,check,"Test GPIO_Init invalid port failed\n");
+
+    //Test invalid pin
+    testStruct.portEnum = GPIO_PORT_A;
+    testStruct.pinEnum = -10;
+    testStruct.mode = GPIO_MODE_OUTPUT;
+    testStruct.af = GPIO_AF4;
+
+    check = GPIO_Init(testStruct);
+    TEST_ASSERT_EQUAL_MESSAGE(GPIO_INVAID_PIN,check,"Test GPIO_Init invalid pin failed\n");
+
+    //Test invalid mode
+    testStruct.portEnum = GPIO_PORT_A;
+    testStruct.pinEnum = GPIO_PIN_5;
+    testStruct.mode = -10;
+    testStruct.af = GPIO_AF4;
+
+    check = GPIO_Init(testStruct);
+    TEST_ASSERT_EQUAL_MESSAGE(GPIO_INVALID_MODE,check,"Test GPIO_Init invalid mode failed\n");
+
+    //Test invalid af
+    testStruct.portEnum = GPIO_PORT_A;
+    testStruct.pinEnum = GPIO_PIN_5;
+    testStruct.mode = GPIO_MODE_ALTERNATE;
+    testStruct.af = -10;
+
+    check = GPIO_Init(testStruct);
+    TEST_ASSERT_EQUAL_MESSAGE(GPIO_INVALID_AF,check,"Test GPIO_Init invalid af failed\n");
+
+    //Test invalid af+mode combo
+    testStruct.portEnum = GPIO_PORT_A;
+    testStruct.pinEnum = GPIO_PIN_5;
+    testStruct.mode = GPIO_MODE_OUTPUT;
+    testStruct.af = GPIO_AF3;
+
+    check = GPIO_Init(testStruct);
+    TEST_ASSERT_EQUAL_MESSAGE(GPIO_INVALID_MODE,check,"Test GPIO_Init invalid af+mode failed\n");
+
+     //Test ok
+    testStruct.portEnum = GPIO_PORT_A;
+    testStruct.pinEnum = GPIO_PIN_5;
+    testStruct.mode = GPIO_MODE_ALTERNATE;
+    testStruct.af = GPIO_AF3;
+
+    check = GPIO_Init(testStruct);
+    TEST_ASSERT_EQUAL_MESSAGE(GPIO_OK,check,"Test GPIO_Init ok failed\n");
+
+    
+}

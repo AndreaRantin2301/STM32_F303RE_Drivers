@@ -37,9 +37,9 @@ LDFlags = -mcpu=$(Core) -mthumb -nostdlib -T $(STARTUP_DIR)/linkerScript.ld -Wl,
 TestCompiler=gcc
 TestFlags = -DUNITY_MAIN -DUNIT_TEST -I$(INC_DIR) -I$(THIRD_PARTY_DIR) -I$(TEST_DIR)
 
-FIRMWARE_SRC = $(OUT_DIR)/startup.o $(OUT_DIR)/gpio_main.o
+FIRMWARE_SRC = $(OUT_DIR)/startup.o $(OUT_DIR)/gpio_main.o $(OUT_DIR)/gpio_driver.o $(OUT_DIR)/gpio_stubs.o
 TEST_SRC = $(UNITY_DIR)/unity.c $(TEST_RUNNERS_DIR)/gpio_test_runner.c \
-		   $(GPIO_DRIVER_TEST_DIR)/gpio_driver_test.c $(GPIO_DRIVER_DIR)/gpio_driver.c
+		   $(GPIO_DRIVER_TEST_DIR)/gpio_driver_test.c $(GPIO_DRIVER_DIR)/gpio_driver.c $(GPIO_DRIVER_DIR)/stubs/gpio_stubs.c
 
 $(OUT_DIR):
 	mkdir $@
@@ -56,12 +56,15 @@ startup.o:$(STARTUP_DIR)/startup.s | $(OUT_DIR)
 gpio_driver.o:$(GPIO_DRIVER_DIR)/gpio_driver.c | $(OUT_DIR)
 	$(Compiler) $(CFlags) $(GPIO_DRIVER_DIR)/gpio_driver.c -o $(OUT_DIR)/gpio_driver.o
 
+gpio_stubs.o:$(GPIO_DRIVER_DIR)/stubs/gpio_stubs.c | $(OUT_DIR)
+	$(Compiler) $(CFlags) $(GPIO_DRIVER_DIR)/stubs/gpio_stubs.c -o $(OUT_DIR)/gpio_stubs.o
+
 
 $(DEBUG_DIR)/firmware.elf: $(FIRMWARE_SRC) | $(DEBUG_DIR)
 	$(Compiler) $(LDFlags) -o $@ $^
 	arm-none-eabi-objcopy -O binary $@ $(DEBUG_DIR)/firmware.bin
 
-all: gpio_main.o startup.o gpio_driver.o $(DEBUG_DIR)/firmware.elf
+all: gpio_main.o startup.o gpio_driver.o gpio_stubs.o $(DEBUG_DIR)/firmware.elf
 
 driver: gpio_driver.o
 

@@ -6,6 +6,7 @@
 #include "UNITY/unity.h"
 #include "drivers/gpio_driver/gpio_driver.h"
 #include "drivers/gpio_driver/gpio_internal.h"
+#include "drivers/gpio_driver/gpio_clock_interface.h"
 #include "drivers/gpio_driver/gpio_test_utils.h"
 #include "ST/stm32f303xe.h"
 #include <string.h>
@@ -66,5 +67,11 @@ void Test_GPIO_Read();
  * 
  */
 void Test_GPIO_Set_Alternate_Function();
+
+/**
+ * @brief Tests GPIO_Init with all possible errors
+ * 
+ */
+void Test_GPIO_Init();
 
 #endif

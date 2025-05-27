@@ -54,6 +54,15 @@ GPIOStatusCode GPIO_Write(GPIOPortEnum gpioPort, GPIOPinEnum gpioPin, GPIOState 
  */
 uint8_t GPIO_Read(GPIOPortEnum gpioPort, GPIOPinEnum gpioPin);
 
+/**
+ * @brief Initializes GPIO with the data provided in the struct
+ * 
+ * @param gpioStruct Struct containing GPIO data such as port and pin enums,
+ * mode and alternate function
+ * @return GPIOStatusCode GPIO_OK if successful
+ */
+GPIOStatusCode GPIO_Init(GPIO_Init_Struct gpioStruct);
+
 #ifdef UNIT_TEST
 #include "ST/stm32f303xe.h"
 #include <stddef.h>
