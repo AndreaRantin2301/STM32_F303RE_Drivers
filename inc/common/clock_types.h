@@ -2,6 +2,7 @@
 #define CLOCK_TYPES_H
 
 #include "common/flash_types.h"
+#include <stdint.h>
 
 /**
  * @brief Status codes for clock operations
@@ -21,6 +22,7 @@ typedef enum {
     CLOCK_ERROR_AHBPRE,
     CLOCK_ERROR_APB1PRE,
     CLOCK_ERROR_APB2PRE,
+    CLOCK_ERROR_SYSTICK_PERIOD,
 }ClockStatusCode;
 
 typedef enum {
@@ -110,5 +112,13 @@ typedef struct {
     ClockAPB2Prescaler apb2Pre;
     FlashLatency flashLatency;
 }ClockInitStruct;
+
+typedef struct {
+    uint32_t systemClock;
+    uint32_t hseClock;
+    uint32_t ahbClock;
+    uint32_t apb1Clock;
+    uint32_t apb2Clock;
+}ClockFrequencies;
 
 #endif
