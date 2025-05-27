@@ -4,70 +4,337 @@
 #undef CLOCK_INTERNAL_USE
 #include "drivers/clock_driver/clock_flash_interface.h"
 
-ClockStatusCode System_Clock_Init(void) {
+static ClockStatusCode Set_Clock_Source(ClockSource source) {
+
     RCC_TypeDef* rcc = Get_RCC();
 
-    //INITIALIZE HSI
-    rcc->CR |= RCC_CR_HSION;
+    switch(source) {
+        /*
+        PLL needs to be disabled to be configured so its the same for HSI in this case
+        */
+        case CLOCK_SOURCE_HSI:
+        case CLOCK_SOURCE_PLL:
+            rcc->CR &= ~RCC_CR_HSEON;
+            rcc->CR &= ~RCC_CR_PLLON;
+            rcc->CR |= RCC_CR_HSION;
+            break;
+        case CLOCK_SOURCE_HSE:
+            break;
+        default:
+            return CLOCK_ERROR_CLOCK_SOURCE;
+    }
 
-    //GIVE TIME TO HSI TO STABILIZE
-    for(volatile uint32_t i = 0; i < 100000; i++) {};
+    //Give time to stabilize
+    for(volatile uint32_t i = 0; i < 1000; i++) {};
 
-    //IF HSI IS NOT READY AFTER A WHILE THOW ERROR
-    if(!IS_HSI_READY()) return CLOCK_ERROR_HSI;
+    switch(source) {
+        case CLOCK_SOURCE_HSI:
+        case CLOCK_SOURCE_PLL:
+            if(!IS_HSI_READY()) return CLOCK_ERROR_HSI_PLL_READY;
+            break;
+        case CLOCK_SOURCE_HSE:
+            if(!IS_HSE_READY()) return CLOCK_ERROR_HSE_READY;
+            break;
+        default:
+            return CLOCK_ERROR_CLOCK_SOURCE;
+    }
 
-    //DISABLE PLL
-    rcc->CR &= ~RCC_CR_PLLON;
+    return CLOCK_OK;
+}
 
-    //RESET PLL CLOCK SOURCE(SO SET HSI/2 BY DEFAULT)
+static ClockStatusCode Set_PLL_Source(ClockPLLSrc pllSrc) {
+
+    RCC_TypeDef* rcc = Get_RCC();
+
     rcc->CFGR &= ~RCC_CFGR_PLLSRC_Msk;
 
-    //SET NO DIVISION FOR PLL HSI INPUT
-    rcc->CFGR |= RCC_CFGR_PLLSRC_HSI_PREDIV;
+    switch(pllSrc) {
+        case PLL_SRC_HSI_HALF:
+            break;
+        case PLL_SRC_HSI:
+            rcc->CFGR |= RCC_CFGR_PLLSRC_HSI_PREDIV;
+            break;
+        case PLL_SRC_HSE:
+            rcc->CFGR |= RCC_CFGR_PLLSRC_HSE_PREDIV;
+            break;
+        default:
+            return CLOCK_ERROR_PLL_SOURCE;
+    }
 
-    //CLEAR PREDIV
+    return CLOCK_OK;
+}
+
+static ClockStatusCode Set_Prediv(ClockPrediv prediv) {
+
+    RCC_TypeDef* rcc = Get_RCC();
     rcc->CFGR2 &= ~RCC_CFGR2_PREDIV_Msk;
-    //SET PREDIV TO 1
-    rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV1;
 
-    //CLEAR PLL MULTIPLIER
+    switch(prediv) {
+        case PREDIV_1:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV1;
+            break;
+        case PREDIV_2:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV2;
+            break;
+        case PREDIV_3:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV3;
+            break;
+        case PREDIV_4:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV4;
+            break;
+        case PREDIV_5:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV5;
+            break;
+        case PREDIV_6:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV6;
+            break;
+        case PREDIV_7:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV7;
+            break;
+        case PREDIV_8:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV8;
+            break;
+        case PREDIV_9:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV9;
+            break;
+        case PREDIV_10:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV10;
+            break;
+        case PREDIV_11:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV11;
+            break;
+        case PREDIV_12:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV12;
+            break;
+        case PREDIV_13:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV13;
+            break;
+        case PREDIV_14:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV14;
+            break;
+        case PREDIV_15:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV15;
+            break;
+        case PREDIV_16:
+            rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV16;
+            break;
+        default:
+            return CLOCK_ERROR_PREDIV;
+    }
+
+    return CLOCK_OK;
+}
+
+static ClockStatusCode Set_PLLMul(ClockPLLMul pllMul) {
+    RCC_TypeDef* rcc = Get_RCC();
     rcc->CFGR &= ~RCC_CFGR_PLLMUL_Msk;
-    //SET PLL MULTIPLIER TO 9 SO that 8Mhz x 9 = 72Mhz
-    rcc->CFGR |= RCC_CFGR_PLLMUL9;
 
-    //SET FLASH LATENCY FOR 72MHZ
-    Flash_Set_Latency(FLASH_LATENCY_TWO_WAIT);
+    switch(pllMul) {
+        case PLL_MUL_2:
+            rcc->CFGR |= RCC_CFGR_PLLMUL2;
+            break;
+        case PLL_MUL_3:
+            rcc->CFGR |= RCC_CFGR_PLLMUL3;
+            break;
+        case PLL_MUL_4:
+            rcc->CFGR |= RCC_CFGR_PLLMUL4;
+            break;
+        case PLL_MUL_5:
+            rcc->CFGR |= RCC_CFGR_PLLMUL5;
+            break;
+        case PLL_MUL_6:
+            rcc->CFGR |= RCC_CFGR_PLLMUL6;
+            break;
+        case PLL_MUL_7:
+            rcc->CFGR |= RCC_CFGR_PLLMUL7;
+            break;
+        case PLL_MUL_8:
+            rcc->CFGR |= RCC_CFGR_PLLMUL8;
+            break;
+        case PLL_MUL_9:
+            rcc->CFGR |= RCC_CFGR_PLLMUL9;
+            break;
+        case PLL_MUL_10:
+            rcc->CFGR |= RCC_CFGR_PLLMUL10;
+            break;
+        case PLL_MUL_11:
+            rcc->CFGR |= RCC_CFGR_PLLMUL11;
+            break;
+        case PLL_MUL_12:
+            rcc->CFGR |= RCC_CFGR_PLLMUL12;
+            break;
+        case PLL_MUL_13:
+            rcc->CFGR |= RCC_CFGR_PLLMUL13;
+            break;
+        case PLL_MUL_14:
+            rcc->CFGR |= RCC_CFGR_PLLMUL14;
+            break;
+        case PLL_MUL_15:
+            rcc->CFGR |= RCC_CFGR_PLLMUL15;
+            break;
+        case PLL_MUL_16:
+            rcc->CFGR |= RCC_CFGR_PLLMUL16;
+            break;
+        default:
+            return CLOCK_ERROR_PLLMUL;
+    }
+
+    return CLOCK_OK;
+}
+
+static ClockStatusCode Set_AHB_Prescaler(ClockAHBPrescaler prescaler) {
+    RCC_TypeDef* rcc = Get_RCC();
+
+    rcc->CFGR &= ~RCC_CFGR_HPRE;
+
+    switch(prescaler) {
+        case AHB_PRE_NONE:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV1;
+            break;
+        case AHB_PRE_2:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV2;
+            break;
+        case AHB_PRE_4:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV4;
+            break;
+        case AHB_PRE_8:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV8;
+            break;
+        case AHB_PRE_16:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV16;
+            break;
+        case AHB_PRE_64:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV64;
+            break;
+        case AHB_PRE_128:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV128;
+            break;
+        case AHB_PRE_256:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV256;
+            break;
+        case AHB_PRE_512:
+            rcc->CFGR |= RCC_CFGR_HPRE_DIV512;
+            break;
+        default:
+            return CLOCK_ERROR_AHBPRE;
+    }
+
+    return CLOCK_OK;
+}
+
+static ClockStatusCode Set_APB1_Prescaler(ClockAPB1Prescaler prescaler) {
+    RCC_TypeDef* rcc = Get_RCC();
+
+    rcc->CFGR &= ~RCC_CFGR_PPRE1_Msk;
+
+    switch(prescaler) {
+        case APB1_PRE_NONE:
+            rcc->CFGR |= RCC_CFGR_PPRE1_DIV1;
+            break;
+        case APB1_PRE_2:
+            rcc->CFGR |= RCC_CFGR_PPRE1_DIV2;
+            break;
+        case APB1_PRE_4:
+            rcc->CFGR |= RCC_CFGR_PPRE1_DIV4;
+            break;
+        case APB1_PRE_8:
+            rcc->CFGR |= RCC_CFGR_PPRE1_DIV8;
+            break;
+        case APB1_PRE_16:
+            rcc->CFGR |= RCC_CFGR_PPRE1_DIV16;
+            break;
+        default:    
+            return CLOCK_ERROR_APB1PRE;
+    }
+
+    return CLOCK_OK;
+}
+
+static ClockStatusCode Set_APB2_Prescaler(ClockAPB2Prescaler prescaler) {
+    RCC_TypeDef* rcc = Get_RCC();
+
+    rcc->CFGR &= ~RCC_CFGR_PPRE2_Msk;
+
+    switch(prescaler) {
+        case APB2_PRE_NONE:
+            rcc->CFGR |= RCC_CFGR_PPRE2_DIV1;
+            break;
+        case APB2_PRE_2:
+            rcc->CFGR |= RCC_CFGR_PPRE2_DIV2;
+            break;
+        case APB2_PRE_4:
+            rcc->CFGR |= RCC_CFGR_PPRE2_DIV4;
+            break;
+        case APB2_PRE_8:
+            rcc->CFGR |= RCC_CFGR_PPRE2_DIV8;
+            break;
+        case APB2_PRE_16:
+            rcc->CFGR |= RCC_CFGR_PPRE2_DIV16;
+            break;
+        default:
+            return CLOCK_ERROR_APB2PRE;
+    }
+
+    return CLOCK_OK;
+}
+
+ClockStatusCode System_Clock_Init(ClockInitStruct clockStruct) {
+    RCC_TypeDef* rcc = Get_RCC();
+
+    ClockStatusCode checkError = Set_Clock_Source(clockStruct.source);
+    if(checkError != CLOCK_OK) return checkError;
+
+    checkError = Set_PLL_Source(clockStruct.pllSrc);
+    if(checkError != CLOCK_OK) return checkError;
+
+    checkError = Set_Prediv(clockStruct.prediv);
+    if(checkError != CLOCK_OK) return checkError;
+
+    checkError = Set_PLLMul(clockStruct.pllMul);
+    if(checkError != CLOCK_OK) return checkError;
+
+    //TODO CHANGE ERROR
+    if(Flash_Set_Latency(clockStruct.flashLatency) != FLASH_OK) return CLOCK_ERROR_CLOCK_SOURCE;
 
     //ENABLE PLL
-    rcc->CR |= RCC_CR_PLLON;
+    if(clockStruct.source == CLOCK_SOURCE_PLL) {
+        rcc->CR |= RCC_CR_PLLON;
+        //GIVE TIME TO PLL TO STABILIZE
+        for(volatile uint32_t i = 0; i < 1000; i++) {};
+        //IF PLL NOT READY AFTER A WHILE THROW ERROR
+        if(!IS_PLL_ON()) return CLOCK_ERROR_PLL;
+        if (!IS_PLL_READY()) return CLOCK_ERROR_PLL;
+    }
+    
+    checkError = Set_AHB_Prescaler(clockStruct.ahbPre);
+    if(checkError != CLOCK_OK) return checkError;
+    
+    checkError = Set_APB1_Prescaler(clockStruct.apb1Pre);
+    if(checkError != CLOCK_OK) return checkError;
 
-    //GIVE TIME TO PLL TO STABILIZE
-    for(volatile uint32_t i = 0; i < 100000; i++) {};
-
-    //IF PLL NOT READY AFTER A WHILE THROW ERROR
-    if(!IS_PLL_ON()) return CLOCK_ERROR_PLL;
-    if (!IS_PLL_READY()) return CLOCK_ERROR_PLL;
-
-    //AHB CLOCK TO 72MHZ
-    rcc->CFGR &= ~RCC_CFGR_HPRE;
-    rcc->CFGR |= RCC_CFGR_HPRE_DIV1;
-
-    //APB1 CLOCK TO 36MHZ
-    rcc->CFGR &= ~RCC_CFGR_PPRE1_Msk;
-    rcc->CFGR |= RCC_CFGR_PPRE1_DIV2;
-
-    //APB2 CLOCK TO 72MHZ
-    rcc->CFGR &= ~RCC_CFGR_PPRE2_Msk;
-    rcc->CFGR |= RCC_CFGR_PPRE2_DIV1;
+    checkError = Set_APB2_Prescaler(clockStruct.apb2Pre);
+    if(checkError != CLOCK_OK) return checkError;
 
     //CLEAR SYSTEM CLOCK SOURCE
     rcc->CFGR &= ~RCC_CFGR_SW_Msk;
     
-    //SET PLL AS SYSTEM CLOCK SOURCE
-    rcc->CFGR |= RCC_CFGR_SW_PLL;
+    //SET SYSTEM CLOCK SOURCE
+    switch(clockStruct.source) {
+        case CLOCK_SOURCE_HSI:
+            rcc->CFGR |= RCC_CFGR_SW_HSI;
+            break;
+        case CLOCK_SOURCE_HSE:
+            rcc->CFGR |= RCC_CFGR_SW_HSE;
+            break;
+        case CLOCK_SOURCE_PLL:
+            rcc->CFGR |= RCC_CFGR_SW_PLL;
+            break;
+        default:
+            return CLOCK_ERROR_CLOCK_SOURCE;
+    }
 
     //GIVE TIME FOR SYSTEM CLOCK TO BE SET
-    for(volatile uint32_t i = 0; i < 100000; i++) {};
+    for(volatile uint32_t i = 0; i < 1000; i++) {};
 
     if(!IS_PLL_SELECTED()) return CLOCK_ERROR_CLOCK_SOURCE;
 

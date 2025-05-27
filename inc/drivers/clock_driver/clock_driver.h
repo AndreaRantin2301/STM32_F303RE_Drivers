@@ -9,7 +9,7 @@
 * 
 * @return ClockStatusCode CLOCK_OK if successful
 */
-ClockStatusCode System_Clock_Init(void);
+ClockStatusCode System_Clock_Init(ClockInitStruct clockStruct);
 
 /**
 * @brief Enables the clock on the given GPIO port
