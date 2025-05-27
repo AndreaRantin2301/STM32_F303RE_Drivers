@@ -4,11 +4,7 @@
 #undef CLOCK_INTERNAL_USE
 #include "drivers/clock_driver/clock_flash_interface.h"
 
-uint32_t systemClock = 0;
-uint32_t hseClock = 0;
-uint32_t ahbClock = 0;
-uint32_t apb1Clock = 0;
-uint32_t apb2Clock = 0;
+ClockFrequencies clockFrequencies = {0};
 
 static ClockStatusCode Set_Clock_Source(ClockSource source) {
 
@@ -288,24 +284,24 @@ static ClockStatusCode Set_APB2_Prescaler(ClockAPB2Prescaler prescaler) {
 static void Calculate_System_Clock(ClockInitStruct clockStruct) {
     switch(clockStruct.source) {
         case CLOCK_SOURCE_HSI:
-            systemClock = 8000000;
+            clockFrequencies.systemClock = 8000000;
             break;
         case CLOCK_SOURCE_HSE:
-            systemClock = hseClock;
+            clockFrequencies.systemClock = clockFrequencies.hseClock;
             break;
         case CLOCK_SOURCE_PLL:
             switch(clockStruct.pllSrc) {
                 case PLL_SRC_HSI_HALF:
-                    systemClock = (uint32_t) ((4000000 / clockStruct.prediv) * clockStruct.pllMul);
+                    clockFrequencies.systemClock = (uint32_t) ((4000000 / clockStruct.prediv) * clockStruct.pllMul);
                     break;
                 case PLL_SRC_HSI:
-                    systemClock = (uint32_t) ((8000000 / clockStruct.prediv) * clockStruct.pllMul);
+                    clockFrequencies.systemClock = (uint32_t) ((8000000 / clockStruct.prediv) * clockStruct.pllMul);
                     break;
                 case PLL_SRC_HSE:
-                    systemClock = hseClock;
+                    clockFrequencies.systemClock = clockFrequencies.hseClock;
                     //Assuming HSE clock was set beforehand
-                    systemClock /= clockStruct.prediv;
-                    systemClock *= clockStruct.pllMul;
+                    clockFrequencies.systemClock /= clockStruct.prediv;
+                    clockFrequencies.systemClock *= clockStruct.pllMul;
                     break;
                 default:
                     break;
@@ -314,9 +310,9 @@ static void Calculate_System_Clock(ClockInitStruct clockStruct) {
         default:
             break;
     }
-    ahbClock = systemClock / clockStruct.ahbPre;
-    apb1Clock = systemClock / clockStruct.apb1Pre;
-    apb2Clock = systemClock / clockStruct.apb2Pre;
+    clockFrequencies.ahbClock = (clockFrequencies.systemClock / clockStruct.ahbPre);
+    clockFrequencies.apb1Clock = (clockFrequencies.systemClock / clockStruct.apb1Pre);
+    clockFrequencies.apb2Clock = (clockFrequencies.systemClock / clockStruct.apb2Pre);
 }
 
 ClockStatusCode System_Clock_Init(ClockInitStruct clockStruct) {
@@ -421,9 +417,13 @@ ClockStatusCode GPIO_Clock_Enable(GPIOPortEnum portEnum) {
 }
 
 void Set_System_Clock(uint32_t clock) {
-    systemClock = clock;
+    clockFrequencies.systemClock = clock;
 }
 
 void Set_HSE_Clock(uint32_t clock) {
-    hseClock = clock;
+    clockFrequencies.hseClock = clock;
+}
+
+const ClockFrequencies *Get_Clock_Frequencies(void) {
+    return &clockFrequencies;
 }
