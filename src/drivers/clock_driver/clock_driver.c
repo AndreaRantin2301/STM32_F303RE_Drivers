@@ -30,12 +30,10 @@ static ClockStatusCode Set_Clock_Source(ClockSource source) {
     switch(source) {
         case CLOCK_SOURCE_HSI:
         case CLOCK_SOURCE_PLL:
-            //TODO CHANGE ERROR
-            if(!IS_HSI_READY()) return CLOCK_ERROR_HSI;
+            if(!IS_HSI_READY()) return CLOCK_ERROR_HSI_PLL_READY;
             break;
         case CLOCK_SOURCE_HSE:
-            //TODO CHANGE ERROR
-            if(!IS_HSE_READY()) return CLOCK_ERROR_HSI;
+            if(!IS_HSE_READY()) return CLOCK_ERROR_HSE_READY;
             break;
         default:
             return CLOCK_ERROR_CLOCK_SOURCE;
@@ -60,8 +58,7 @@ static ClockStatusCode Set_PLL_Source(ClockPLLSrc pllSrc) {
             rcc->CFGR |= RCC_CFGR_PLLSRC_HSE_PREDIV;
             break;
         default:
-            //TODO CHANGE ERROR
-            return CLOCK_ERROR_CLOCK_SOURCE;
+            return CLOCK_ERROR_PLL_SOURCE;
     }
 
     return CLOCK_OK;
@@ -122,8 +119,7 @@ static ClockStatusCode Set_Prediv(ClockPrediv prediv) {
             rcc->CFGR2 |= RCC_CFGR2_PREDIV_DIV16;
             break;
         default:
-            //TODO CHANGE ERROR
-            return CLOCK_ERROR_PLL;
+            return CLOCK_ERROR_PREDIV;
     }
 
     return CLOCK_OK;
@@ -180,8 +176,7 @@ static ClockStatusCode Set_PLLMul(ClockPLLMul pllMul) {
             rcc->CFGR |= RCC_CFGR_PLLMUL16;
             break;
         default:
-            //TODO CHANGE ERROR
-            return CLOCK_ERROR_CLOCK_SOURCE;
+            return CLOCK_ERROR_PLLMUL;
     }
 
     return CLOCK_OK;
@@ -208,8 +203,6 @@ static ClockStatusCode Set_AHB_Prescaler(ClockAHBPrescaler prescaler) {
         case AHB_PRE_16:
             rcc->CFGR |= RCC_CFGR_HPRE_DIV16;
             break;
-        case AHB_PRE_32: //TODO REMOVE
-            break;
         case AHB_PRE_64:
             rcc->CFGR |= RCC_CFGR_HPRE_DIV64;
             break;
@@ -223,8 +216,7 @@ static ClockStatusCode Set_AHB_Prescaler(ClockAHBPrescaler prescaler) {
             rcc->CFGR |= RCC_CFGR_HPRE_DIV512;
             break;
         default:
-            //TODO CHANGE ERROR
-            return CLOCK_ERROR_CLOCK_SOURCE;
+            return CLOCK_ERROR_AHBPRE;
     }
 
     return CLOCK_OK;
@@ -252,8 +244,7 @@ static ClockStatusCode Set_APB1_Prescaler(ClockAPB1Prescaler prescaler) {
             rcc->CFGR |= RCC_CFGR_PPRE1_DIV16;
             break;
         default:    
-            //TODO CHANGE ERROR
-            return CLOCK_ERROR_CLOCK_SOURCE;
+            return CLOCK_ERROR_APB1PRE;
     }
 
     return CLOCK_OK;
@@ -281,8 +272,7 @@ static ClockStatusCode Set_APB2_Prescaler(ClockAPB2Prescaler prescaler) {
             rcc->CFGR |= RCC_CFGR_PPRE2_DIV16;
             break;
         default:
-            //TODO CHANGE ERROR
-            return CLOCK_ERROR_CLOCK_SOURCE;
+            return CLOCK_ERROR_APB2PRE;
     }
 
     return CLOCK_OK;
@@ -303,7 +293,6 @@ ClockStatusCode System_Clock_Init(ClockInitStruct clockStruct) {
     checkError = Set_PLLMul(clockStruct.pllMul);
     if(checkError != CLOCK_OK) return checkError;
 
-    //SET FLASH LATENCY FOR 72MHZ
     //TODO CHANGE ERROR
     if(Flash_Set_Latency(clockStruct.flashLatency) != FLASH_OK) return CLOCK_ERROR_CLOCK_SOURCE;
 
