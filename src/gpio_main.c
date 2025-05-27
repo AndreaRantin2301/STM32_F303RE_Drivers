@@ -4,7 +4,14 @@
     actual main
 */
 
+#include "drivers/gpio_driver/gpio_driver.h"
+
 int main(void) {
+
+    GPIO_Init_Struct test = {0};
+
+    GPIOStatusCode check = GPIO_Init(test);
+    (void) check;
 
     while(1) {
 

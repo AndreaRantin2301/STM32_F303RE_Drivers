@@ -1,5 +1,6 @@
 #include "drivers/gpio_driver/gpio_driver.h"
 #include "drivers/gpio_driver/gpio_internal.h"
+#include "drivers/gpio_driver/gpio_clock_interface.h"
 #include "ST/stm32f303xe.h"
 #include <stddef.h>
 #include <stdbool.h>
@@ -165,4 +166,19 @@ uint8_t GPIO_Read(GPIOPortEnum portEnum, GPIOPinEnum pinEnum) {
     GPIO_TypeDef* port = GPIO_Get_Port(portEnum);
     if(port == NULL) return 0;
     return (uint8_t)((port->IDR & (1U << pinEnum)) != 0);
+}
+
+GPIOStatusCode GPIO_Init(GPIO_Init_Struct gpioStruct) {
+    if(GPIO_Clock_Enable(gpioStruct.portEnum) != CLOCK_OK) return GPIO_INIT_ERROR;
+
+    GPIOStatusCode checkError = GPIO_OK;
+
+    checkError = GPIO_Set_Mode(gpioStruct.portEnum,gpioStruct.pinEnum,gpioStruct.mode);
+    if(checkError != GPIO_OK) return checkError;
+
+    if(gpioStruct.af != GPIO_AF_NONE) {
+        if(gpioStruct.mode != GPIO_MODE_ALTERNATE) return GPIO_INVALID_MODE;
+        checkError = GPIO_Set_Alternate_Function(gpioStruct.portEnum,gpioStruct.pinEnum,gpioStruct.af);
+    }
+    return checkError;
 }

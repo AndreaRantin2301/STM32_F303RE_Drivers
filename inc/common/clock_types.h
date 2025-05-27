@@ -10,6 +10,7 @@ typedef enum {
     CLOCK_ERROR_HSI,
     CLOCK_ERROR_PLL,
     CLOCK_ERROR_CLOCK_SOURCE,
+    CLOCK_ERROR_GPIO_CLOCK,
 }ClockStatusCode;
 
 #endif

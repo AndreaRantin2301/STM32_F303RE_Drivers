@@ -23,6 +23,7 @@ int main(void) {
     RUN_TEST(Test_GPIO_Write);
     RUN_TEST(Test_GPIO_Read);
     RUN_TEST(Test_GPIO_Set_Alternate_Function);
+    RUN_TEST(Test_GPIO_Init);
 
     return UNITY_END();
 }

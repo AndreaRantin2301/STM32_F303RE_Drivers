@@ -74,6 +74,7 @@ typedef enum {
     GPIO_AF13,
     GPIO_AF14,
     GPIO_AF15,
+    GPIO_AF_NONE,
 }GPIOAlternateFunction;
 
 /**
@@ -95,6 +96,18 @@ typedef enum {
     GPIO_INVAID_PIN,
     GPIO_INVALID_MODE,
     GPIO_INVALID_AF,
+    GPIO_INIT_ERROR,
 }GPIOStatusCode;
+
+/**
+ * @brief Initialization structure for GPIO
+ * 
+ */
+typedef struct {
+    GPIOPortEnum portEnum;
+    GPIOPinEnum pinEnum;
+    GPIOMode mode;
+    GPIOAlternateFunction af;
+}GPIO_Init_Struct;
 
 #endif
