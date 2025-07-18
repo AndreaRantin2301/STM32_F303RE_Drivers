@@ -5,6 +5,7 @@ add_library(drivers STATIC
 target_include_directories(drivers PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/inc/common
+    ${CMAKE_SOURCE_DIR}/third_party
 )
 
 target_compile_options(drivers PRIVATE
