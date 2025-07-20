@@ -1,5 +1,5 @@
 add_library(drivers STATIC
-    src/empty.c
+    src/empty.cpp
 )
 
 target_include_directories(drivers PUBLIC

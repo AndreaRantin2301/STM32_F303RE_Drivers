@@ -1,5 +1,5 @@
 add_executable(firmware
-    src/main.c
+    src/main.cpp
 )
 
 target_include_directories(firmware PRIVATE
