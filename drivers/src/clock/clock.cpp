@@ -23,28 +23,14 @@ static DriverStatusCode Set_Clock_Source(ClockSource clockSource) {
     RCC->CR &= ~RCC_CR_HSEON_Msk;
     RCC->CR &= ~RCC_CR_PLLON_Msk;
 
-    //PLL is not yet managed here because it needs to be configured
-    switch(clockSource) {
-        case ClockSource::HSI:
-            RCC->CR |= RCC_CR_HSION;
-            //Give time to stabilize
-            for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
-            if(!IS_HSI_ON()) return DriverStatusCode::ERROR_CLOCK_READY;
-            break;
-        case ClockSource::HSE:
-            RCC->CR |= RCC_CR_HSEON;
-            //Give time to stabilize
-            for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
-            if(!IS_HSE_READY()) return DriverStatusCode::ERROR_CLOCK_READY;
-            break;
-        case ClockSource::PLL:
-            RCC->CR |= RCC_CR_HSION;
-            //Give time to stabilize
-            for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
-            break;
-        default:
-            return DriverStatusCode::ERROR_CLOCK_READY;
-    }
+    //Get reference from lookup table
+    const ClockSourceStruct& sourceStruct = clockSourceStructTable[static_cast<int>(clockSource)];
+
+    RCC->CR |= sourceStruct.clockEnableBits;
+    //Give time to stabilize
+    for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
+    if(!sourceStruct.isReadyFunction()) return DriverStatusCode::ERROR_CLOCK_READY;
+
     return DriverStatusCode::OK;
 }
 
@@ -176,21 +162,12 @@ DriverStatusCode Clock::Clock_Init(ClockInitStruct clockInitStruct) {
 
     RCC->CFGR &= ~RCC_CFGR_SW_Msk;
 
-    if(clockInitStruct.clockSource == ClockSource::HSI){
-        RCC->CFGR |= RCC_CFGR_SW_HSI;
-        for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
-        if(!IS_HSI_SELECTED()) return DriverStatusCode::ERROR_CLOCK_SELECTED;
-    } 
-    if(clockInitStruct.clockSource == ClockSource::HSE){
-        RCC->CFGR |= RCC_CFGR_SW_HSE;
-        for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
-        if(!IS_HSE_SELECTED()) return DriverStatusCode::ERROR_CLOCK_SELECTED;
-    }
-    if(clockInitStruct.clockSource == ClockSource::PLL){
-        RCC->CFGR |= RCC_CFGR_SW_PLL;
-        for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
-        if(!IS_PLL_SELECTED()) return DriverStatusCode::ERROR_CLOCK_SELECTED;
-    } 
+    const ClockSourceStruct& sourceStruct = clockSourceStructTable[static_cast<int>(clockInitStruct.clockSource)];
+
+    RCC->CFGR |= sourceStruct.clockSelectBits;
+    for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
+    if(!sourceStruct.isSelectedFunction()) return DriverStatusCode::ERROR_CLOCK_SELECTED;
 
     return DriverStatusCode::OK;
+    
 }
