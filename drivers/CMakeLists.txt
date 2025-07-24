@@ -1,5 +1,5 @@
 add_library(drivers STATIC
-    src/empty.cpp
+    src/clock/clock.cpp
 )
 
 target_include_directories(drivers PUBLIC
