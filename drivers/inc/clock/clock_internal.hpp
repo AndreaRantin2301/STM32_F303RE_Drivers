@@ -91,3 +91,22 @@ static inline bool IS_HSE_SELECTED() {return ((RCC->CFGR & RCC_CFGR_SWS_Msk) == 
 */
 static inline bool IS_PLL_SELECTED() {return ((RCC->CFGR & RCC_CFGR_SWS_Msk) == RCC_CFGR_SWS_PLL);}
 
+/**
+ * @brief Internal structure for clock source.
+ * This structure allows to avoid using lots of ifs and switches because
+ * it unifies the clock source enabling and selection
+ * 
+ */
+typedef struct {
+    uint32_t clockEnableBits; /*!< Mask for the CR register of RCC to enable the clock source */
+    bool (*isReadyFunction)(); /*!< Function to check if the clock source is ready */
+    uint32_t clockSelectBits; /*!< Mask for the CFGR register to select the clock source */
+    bool (*isSelectedFunction)(); /*!< Function to check if the clock source is selected */
+}ClockSourceStruct;
+
+static constexpr ClockSourceStruct clockSourceStructTable[] = {
+    {RCC_CR_HSION, IS_HSI_READY, RCC_CFGR_SW_HSI, IS_HSI_SELECTED},
+    {RCC_CR_HSEON, IS_HSE_READY, RCC_CFGR_SW_HSE, IS_HSE_SELECTED},
+    {RCC_CR_HSION, IS_HSI_READY, RCC_CFGR_SW_PLL, IS_PLL_SELECTED},
+};
+
