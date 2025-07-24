@@ -9,7 +9,7 @@ target_include_directories(drivers PUBLIC
 )
 
 target_compile_options(drivers PRIVATE
-    -Werror -Wpedantic -Wall -Wextra -fanalyzer -fno-rtti -fno-exceptions -nostdlib
+    -Werror -Wpedantic -Wall -Wextra -fanalyzer -fno-rtti -fno-exceptions -nostdlib -mthumb -g
 )
 
 # Future driver modules
