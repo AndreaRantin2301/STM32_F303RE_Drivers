@@ -2,6 +2,10 @@ add_executable(firmware
     src/main.cpp
 )
 
+set_target_properties(firmware PROPERTIES
+    SUFFIX ".elf"
+)
+
 target_include_directories(firmware PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
 )
@@ -14,13 +18,13 @@ target_link_libraries(firmware PRIVATE
 set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/startup/linkerScript.ld")
 
 target_link_options(firmware PRIVATE 
-   -Wl,-T${LINKER_SCRIPT}
+   -Wl,-T${LINKER_SCRIPT} -mthumb
 )
 
 # Compile options for example firmware
 target_compile_options(firmware PRIVATE
     -Werror -Wpedantic -Wall -Wextra -fanalyzer
-    -g -ffreestanding -nostdlib
+    -g -ffreestanding -nostdlib -fno-rtti -fno-exceptions
 )
     
 # Binary file generation
