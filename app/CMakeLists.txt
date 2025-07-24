@@ -24,7 +24,7 @@ target_link_options(firmware PRIVATE
 # Compile options for example firmware
 target_compile_options(firmware PRIVATE
     -Werror -Wpedantic -Wall -Wextra -fanalyzer
-    -g -ffreestanding -nostdlib -fno-rtti -fno-exceptions
+    -g -ffreestanding -nostdlib -fno-rtti -fno-exceptions -mthumb
 )
     
 # Binary file generation
