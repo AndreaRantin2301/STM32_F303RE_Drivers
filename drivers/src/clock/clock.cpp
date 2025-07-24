@@ -15,13 +15,12 @@ using namespace ClockTypes;
 * 
 * @param clockSource Enum value for clock source
 * @return DriverStatusCode The status code returned by this function can be:
-*      - DriverStatusCode_t::OK If the clock source was set correctly
-*      - DriverStatusCode_t::ERROR_CLOCK_READY If the clock source was not ready after being set
+*      - DriverStatusCode::OK If the clock source was set correctly
+*      - DriverStatusCode::ERROR_CLOCK_READY If the clock source was not ready after being set
 */
 static DriverStatusCode Set_Clock_Source(ClockSource clockSource) {
 
-    RCC->CR &= ~RCC_CR_HSEON_Msk;
-    RCC->CR &= ~RCC_CR_PLLON_Msk;
+    Clock::Clock_Deinit();
 
     //Get reference from lookup table
     const ClockSourceStruct& sourceStruct = clockSourceStructTable[static_cast<int>(clockSource)];
@@ -170,4 +169,41 @@ DriverStatusCode Clock::Clock_Init(ClockInitStruct clockInitStruct) {
 
     return DriverStatusCode::OK;
     
+}
+
+DriverStatusCode Clock::Clock_Deinit(void) {
+
+    //If HSI is already used as system clock then no need to deinit
+    if(IS_HSI_SELECTED() && !IS_PLL_ON()) return DriverStatusCode::OK;
+
+    RCC->CR |= RCC_CR_HSION;
+
+    for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++){};
+
+    if(!IS_HSI_READY()) return DriverStatusCode::ERROR_CLOCK_READY;
+
+    //Set HSI as system clock
+    RCC->CFGR &= ~RCC_CFGR_SW_Msk;
+    RCC->CFGR |= RCC_CFGR_SW_HSI;
+
+    for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++){};
+
+    if(!IS_HSI_SELECTED()) return DriverStatusCode::ERROR_CLOCK_SELECTED;
+
+    //Reset all prescalers and pll settings
+    RCC->CFGR &= ~RCC_CFGR_HPRE_Msk;
+    RCC->CFGR &= ~RCC_CFGR_PPRE1_Msk;
+    RCC->CFGR &= ~RCC_CFGR_PPRE2_Msk;
+    RCC->CFGR2 &= ~RCC_CFGR2_PREDIV_Msk;
+    RCC->CFGR &= ~RCC_CFGR_PLLMUL_Msk;
+    RCC->CFGR &= ~RCC_CFGR_PLLSRC_Msk;
+
+    RCC->CR &= ~RCC_CR_HSEON;
+    RCC->CR &= ~RCC_CR_PLLON;
+
+    //Set latency to 0
+    FLASH->ACR &= ~FLASH_ACR_LATENCY_Msk;
+    FLASH->ACR |= FLASH_ACR_LATENCY_0;
+
+    return DriverStatusCode::OK;
 }
