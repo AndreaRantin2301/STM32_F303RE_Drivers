@@ -21,9 +21,15 @@ namespace Clock {
     * @param clockInitStruct Initialization struct containing configuration values for system clock.
     * This is a structure of type @ref ClockInitStruct_t
     * @return DriverStatusCode_t The status code returned by this function can be:
-    *      - DriverStatusCode_t::OK If the clock was initialized successfully
-    *      - DriverStatusCode_t::ERROR_CLOCK_READY If the clock was not ready after setting the clock source
-    *      - DriverStatusCode_t::ERROR_CLOCK_SELECTED If the selected system clock was not the correct one after initialization
+    *      - DriverStatusCode::OK If the clock was initialized successfully
+    *      - DriverStatusCode::ERROR_CLOCK_READY If the clock was not ready after setting the clock source
+    *      - DriverStatusCode::ERROR_CLOCK_SELECTED If the selected system clock was not the correct one after initialization
     */
     DriverStatusCode Clock_Init(ClockInitStruct clockInitStruct);
+
+    /**
+    * @brief Deinitializes the system clock and sets it to a default setting which is: Internal HSI used as system clock(8MHz),
+    * PLL and HSE disabled, no prescaling and prediv, flash latency set to zero wait, PLL multiplier reset
+    */
+    DriverStatusCode Clock_Deinit(void);
 }
