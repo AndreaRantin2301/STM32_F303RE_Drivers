@@ -26,6 +26,7 @@ namespace Clock {
         ClockTypes::ClockAPB1Pre apb1Pre; /*!< APB1 bus prescaler factor */
         ClockTypes::ClockAPB2Pre apb2Pre; /*!< APB2 bus prescaler factor*/
         FlashTypes::FlashLatency flashLatency; /*!< Flash access wait latency */
+        bool hseBypass = false; /*!< External HSE provided. If this flag is true, it is only applied if HSE is selected as system clock*/
     }ClockInitStruct;
 }
 
