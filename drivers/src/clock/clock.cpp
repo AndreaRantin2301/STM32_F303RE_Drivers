@@ -14,16 +14,23 @@ using namespace ClockTypes;
 * @brief Sets the RCC clock source register from the provided enum value
 * 
 * @param clockSource Enum value for clock source
+* @param hseBypass Flag to indicate if external HSE is provided(only effective if clockSource is HSE)
 * @return DriverStatusCode The status code returned by this function can be:
 *      - DriverStatusCode::OK If the clock source was set correctly
 *      - DriverStatusCode::ERROR_CLOCK_READY If the clock source was not ready after being set
 */
-static DriverStatusCode Set_Clock_Source(ClockSource clockSource) {
+static DriverStatusCode Set_Clock_Source(ClockSource clockSource, bool hseBypass) {
 
     Clock::Clock_Deinit();
 
     //Get reference from lookup table
     const ClockSourceStruct& sourceStruct = clockSourceStructTable[static_cast<int>(clockSource)];
+
+    //If HSE is selected as system clock and bypass flag to true then set bit otherwise reset it
+    RCC->CR &= ~RCC_CR_HSEBYP;
+    if(hseBypass && clockSource == ClockSource::HSE) {
+        RCC->CR |= RCC_CR_HSEBYP;
+    }
 
     RCC->CR |= sourceStruct.clockEnableBits;
     //Give time to stabilize
@@ -139,7 +146,7 @@ DriverStatusCode Clock::Clock_Init(ClockInitStruct clockInitStruct) {
 
     Set_APB2_Prescaler(clockInitStruct.apb2Pre);
 
-    DriverStatusCode checkError = Set_Clock_Source(clockInitStruct.clockSource);
+    DriverStatusCode checkError = Set_Clock_Source(clockInitStruct.clockSource,clockInitStruct.hseBypass);
     if(checkError != DriverStatusCode::OK) return checkError;
 
     Set_PLL_Source(clockInitStruct.pllSource);

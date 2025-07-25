@@ -12,9 +12,7 @@ using namespace Clock;
 using namespace ClockTypes;
 using namespace FlashTypes;
 
-int a = 0;
-
-extern "C" int main() {
+int main() {
 
     ClockInitStruct clockInitStruct;
 
