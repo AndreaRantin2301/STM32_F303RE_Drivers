@@ -110,3 +110,13 @@ static constexpr ClockSourceStruct clockSourceStructTable[] = {
     {RCC_CR_HSION, IS_HSI_READY, RCC_CFGR_SW_PLL, IS_PLL_SELECTED},
 };
 
+static constexpr uint32_t gpioClockTable[] = {
+    RCC_AHBENR_GPIOAEN,
+    RCC_AHBENR_GPIOBEN,
+    RCC_AHBENR_GPIOCEN,
+    RCC_AHBENR_GPIODEN,
+    RCC_AHBENR_GPIOEEN,
+    RCC_AHBENR_GPIOFEN,
+    RCC_AHBENR_GPIOGEN,
+    RCC_AHBENR_GPIOHEN
+};
