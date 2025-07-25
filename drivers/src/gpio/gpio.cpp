@@ -35,11 +35,76 @@ static void GPIO_Set_Mode(GPIOPort port, GPIOPin pin, GPIOMode mode) {
     portVal->MODER |= modeVal << pinBitsPos;
 }
 
+/**
+* @brief Sets a PullUp/PullDown for the given GPIO pin
+* 
+* @param port Port of the GPIO pin
+* @param pin GPIO pin
+* @param pupPd PullUp/PullDown to set(if any)
+*/
+static void GPIO_Set_PullUpDown(GPIOPort port, GPIOPin pin, GPIOPupPd pupPd) {
+    
+    uint8_t pinVal = static_cast<uint8_t>(pin);
+    uint8_t pupPdVal = static_cast<uint8_t>(pupPd);
+    GPIO_TypeDef* portVal = gpioPortsList[static_cast<int>(port)];
+
+    //Calculate the bits position for the given pin
+    uint32_t pinBitsPos = (pinVal * 2);
+
+    //Clear PUPDR register
+    portVal->PUPDR &= ~(0x03U << pinBitsPos);
+
+    //Set the given PullUp/PullDown
+    portVal->PUPDR |= pupPdVal << pinBitsPos;
+}
+
+/**
+* @brief Sets the output speed for the give GPIO pin
+* 
+* @param port Port of the GPIO pin
+* @param pin GPIO pin
+* @param speed Output speed to set
+*/
+static void GPIO_Set_OutputSpeed(GPIOPort port, GPIOPin pin, GPIOOutputSpeed speed) {
+
+    uint8_t pinVal = static_cast<uint8_t>(pin);
+    uint8_t speedVal = static_cast<uint8_t>(speed);
+    GPIO_TypeDef* portVal = gpioPortsList[static_cast<int>(port)];
+
+    //Calculate the bits position for the given pin
+    uint32_t pinBitsPos = (pinVal * 2);
+
+    //Clear OSPEED register
+    portVal->OSPEEDR &= ~(0x03U << pinBitsPos);
+
+    //Set the given output speed
+    portVal->OSPEEDR |= speedVal << pinBitsPos;
+}
+
+static void GPIO_Set_OutputType(GPIOPort port, GPIOPin pin, GPIOOutputType type) {
+
+    uint8_t pinVal = static_cast<uint8_t>(pin);
+    uint8_t typeVal = static_cast<uint8_t>(type);
+    GPIO_TypeDef* portVal = gpioPortsList[static_cast<int>(port)];
+
+    //Clear OTYPER register
+    portVal->OTYPER &= ~(0x01U << pinVal);
+
+    //Set the given output type
+    portVal->OTYPER |= typeVal << pinVal;
+}
+
 DriverStatusCode GPIO::GPIO_Init(GPIOInitStruct gpioInitStruct) {
 
     Clock_GPIO_Enable(gpioInitStruct.port);
 
     GPIO_Set_Mode(gpioInitStruct.port, gpioInitStruct.pin, gpioInitStruct.mode);
+
+    GPIO_Set_OutputType(gpioInitStruct.port, gpioInitStruct.pin, gpioInitStruct.outputType);
+
+    GPIO_Set_OutputSpeed(gpioInitStruct.port, gpioInitStruct.pin, gpioInitStruct.outputSpeed);
+
+    GPIO_Set_PullUpDown(gpioInitStruct.port, gpioInitStruct.pin, gpioInitStruct.pupPd);
 
     return DriverStatusCode::OK;
 }
@@ -49,10 +114,10 @@ void GPIO::GPIO_Write(GPIOPort port, GPIOPin pin, GPIOState state) {
     GPIO_TypeDef* portVal = gpioPortsList[static_cast<int>(port)];
     uint8_t pinVal = static_cast<uint8_t>(pin);
 
-    portVal->BRR = (1U << pinVal);
-
-    if(state == GPIOState::SET) {
+    if (state == GPIOState::SET) {
         portVal->BSRR = (1U << pinVal);
+    } else {
+        portVal->BRR = (1U << pinVal);
     }
 }
 
