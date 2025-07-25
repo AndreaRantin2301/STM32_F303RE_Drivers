@@ -69,4 +69,33 @@ namespace GPIOTypes {
         RESET = 0,
         SET = 1,
     };
+
+    /**
+    * @brief Pull up/down for GPIO
+    * 
+    */
+    enum class GPIOPupPd {
+        NO_PULLUP_PULLDOWN = 0b00,
+        PULL_UP = 0b01,
+        PULL_DOWN = 0b10
+    };
+
+    /**
+    * @brief Output speed for GPIO
+    * 
+    */
+    enum class GPIOOutputSpeed {
+        LOW = 0b00,
+        MEDIUM = 0b01,
+        HIGH = 0b11,
+    };
+
+    /**
+    * @brief Output type for GPIO
+    * 
+    */
+    enum class GPIOOutputType {
+        PUSH_PULL = 0,
+        OPEN_DRAIN = 1,
+    };
 }

@@ -19,5 +19,8 @@ namespace GPIO {
         GPIOTypes::GPIOPort port; /*!< GPIO port */
         GPIOTypes::GPIOPin pin; /*!< GPIO pin of the port*/
         GPIOTypes::GPIOMode mode; /*!< Mode to assing to the pin*/
+        GPIOTypes::GPIOPupPd pupPd = GPIOTypes::GPIOPupPd::NO_PULLUP_PULLDOWN; /*|< PullUp/PullDown* for the pin, defaults to NO*/
+        GPIOTypes::GPIOOutputType outputType = GPIOTypes::GPIOOutputType::PUSH_PULL; /*< GPIO output type, defaults to PUSH_PULL*/
+        GPIOTypes::GPIOOutputSpeed outputSpeed = GPIOTypes::GPIOOutputSpeed::HIGH; /*!< GPIO output speed, defaults to HIGH*/
     }GPIOInitStruct;
 }
