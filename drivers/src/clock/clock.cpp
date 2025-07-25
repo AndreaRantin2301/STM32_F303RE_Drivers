@@ -13,22 +13,21 @@ using namespace ClockTypes;
 /**
 * @brief Sets the RCC clock source register from the provided enum value
 * 
-* @param clockSource Enum value for clock source
-* @param hseBypass Flag to indicate if external HSE is provided(only effective if clockSource is HSE)
+* @param clockInitStruct: Structure with all clock configuration flags
 * @return DriverStatusCode The status code returned by this function can be:
 *      - DriverStatusCode::OK If the clock source was set correctly
 *      - DriverStatusCode::ERROR_CLOCK_READY If the clock source was not ready after being set
 */
-static DriverStatusCode Set_Clock_Source(ClockSource clockSource, bool hseBypass) {
+static DriverStatusCode Set_Clock_Source(Clock::ClockInitStruct clockInitStruct) {
 
     Clock::Clock_Deinit();
 
     //Get reference from lookup table
-    const ClockSourceStruct& sourceStruct = clockSourceStructTable[static_cast<int>(clockSource)];
+    const ClockSourceStruct& sourceStruct = clockSourceStructTable[static_cast<int>(clockInitStruct.clockSource)];
 
     //If HSE is selected as system clock and bypass flag to true then set bit otherwise reset it
     RCC->CR &= ~RCC_CR_HSEBYP;
-    if(hseBypass && clockSource == ClockSource::HSE) {
+    if(clockInitStruct.hseBypass && clockInitStruct.clockSource == ClockSource::HSE) {
         RCC->CR |= RCC_CR_HSEBYP;
     }
 
@@ -36,6 +35,16 @@ static DriverStatusCode Set_Clock_Source(ClockSource clockSource, bool hseBypass
     //Give time to stabilize
     for(volatile uint16_t i = 0; i < CLOCK_STABILIZE_TIME; i++) {};
     if(!sourceStruct.isReadyFunction()) return DriverStatusCode::ERROR_CLOCK_READY;
+
+
+    RCC->CR &= ~RCC_CR_CSSON;
+    //If HSE is used as system clock or PLL source and CSS flag is true then enable CSS
+    if(clockInitStruct.cssEnable 
+        && ((clockInitStruct.clockSource == ClockSource::HSE) 
+        || ((clockInitStruct.clockSource == ClockSource::PLL) 
+        && (clockInitStruct.pllSource == ClockPLLSource::HSE)))) {
+        RCC->CR |= RCC_CR_CSSON;
+    }
 
     return DriverStatusCode::OK;
 }
@@ -146,7 +155,7 @@ DriverStatusCode Clock::Clock_Init(ClockInitStruct clockInitStruct) {
 
     Set_APB2_Prescaler(clockInitStruct.apb2Pre);
 
-    DriverStatusCode checkError = Set_Clock_Source(clockInitStruct.clockSource,clockInitStruct.hseBypass);
+    DriverStatusCode checkError = Set_Clock_Source(clockInitStruct);
     if(checkError != DriverStatusCode::OK) return checkError;
 
     Set_PLL_Source(clockInitStruct.pllSource);
