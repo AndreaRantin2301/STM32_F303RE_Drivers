@@ -120,7 +120,7 @@ static DriverStatusCode GPIO_Set_AF(GPIO::GPIOInitStruct gpioInitStruct) {
     uint8_t afVal = static_cast<int8_t>(gpioInitStruct.alternateFunction);
 
     //Check which af register to use
-    uint8_t afrIndex = (pinVal > 8) ? 1 : 0;
+    uint8_t afrIndex = (pinVal >= 8) ? 1 : 0;
     //Check which bits correspond to the given pin
     uint8_t afrBitsPos = (pinVal % 8) * 4;
 
