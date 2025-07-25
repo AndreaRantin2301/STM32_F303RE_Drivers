@@ -7,8 +7,10 @@
 
 #include "gpio/gpio.hpp"
 #include "gpio/gpio_internal.hpp"
+#include "clock/clock_peripheral.hpp"
 
 using namespace GPIOTypes;
+using namespace ClockPeripheral;
 
 /**
  * @brief Sets the selected mode to the GPIO pin of the given port
@@ -34,6 +36,8 @@ static void GPIO_Set_Mode(GPIOPort port, GPIOPin pin, GPIOMode mode) {
 }
 
 DriverStatusCode GPIO::GPIO_Init(GPIOInitStruct gpioInitStruct) {
+
+    Clock_GPIO_Enable(gpioInitStruct.port);
 
     GPIO_Set_Mode(gpioInitStruct.port, gpioInitStruct.pin, gpioInitStruct.mode);
 

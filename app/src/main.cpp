@@ -34,8 +34,6 @@ int main() {
         }
     }
 
-    RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-
     GPIOInitStruct gpioInitStruct;
 
     gpioInitStruct.port = GPIOPort::A;
