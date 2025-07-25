@@ -7,10 +7,13 @@
 
 #include "main.hpp"
 #include "clock/clock.hpp"
+#include "gpio/gpio.hpp"
 
 using namespace Clock;
+using namespace GPIO;
 using namespace ClockTypes;
 using namespace FlashTypes;
+using namespace GPIOTypes;
 
 int main() {
 
@@ -33,12 +36,17 @@ int main() {
 
     RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-    GPIOA->MODER &= ~(0x3 << (5 * 2));  // Clear bits 11:10
-    GPIOA->MODER |=  (0x1 << (5 * 2));  // Set bit 10 to 1 (01)
+    GPIOInitStruct gpioInitStruct;
+
+    gpioInitStruct.port = GPIOPort::A;
+    gpioInitStruct.pin = GPIOPin::PIN_5;
+    gpioInitStruct.mode = GPIOMode::OUTPUT;
+
+    GPIO_Init(gpioInitStruct);
     
   
     while (1) {
-       GPIOA->ODR ^= (1U << 5);
+       GPIO_Toggle(GPIOPort::A, GPIOPin::PIN_5);
        for(volatile uint32_t i = 0; i < 1000000; i++){};
     }
 

@@ -1,5 +1,6 @@
 add_library(drivers STATIC
     src/clock/clock.cpp
+    src/gpio/gpio.cpp
     src/common/handlers.cpp
 )
 
