@@ -98,4 +98,28 @@ namespace GPIOTypes {
         PUSH_PULL = 0,
         OPEN_DRAIN = 1,
     };
+
+    /**
+    * @brief GPIO Alternate functions
+    * 
+    */
+    enum class GPIOAf {
+        AF_NONE = -1,
+        AF_0,
+        AF_1,
+        AF_2,
+        AF_3,
+        AF_4,
+        AF_5,
+        AF_6,
+        AF_7,
+        AF_8,
+        AF_9,
+        AF_10,
+        AF_11,
+        AF_12,
+        AF_13,
+        AF_14,
+        AF_15,
+    };
 }

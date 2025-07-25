@@ -17,5 +17,6 @@ enum class DriverStatusCode{
     OK = 0,
     ERROR_CLOCK_READY,
     ERROR_CLOCK_SELECTED,
+    ERROR_GPIO_AF,
 };
 

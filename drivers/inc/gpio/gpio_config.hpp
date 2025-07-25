@@ -22,5 +22,6 @@ namespace GPIO {
         GPIOTypes::GPIOPupPd pupPd = GPIOTypes::GPIOPupPd::NO_PULLUP_PULLDOWN; /*|< PullUp/PullDown* for the pin, defaults to NO*/
         GPIOTypes::GPIOOutputType outputType = GPIOTypes::GPIOOutputType::PUSH_PULL; /*< GPIO output type, defaults to PUSH_PULL*/
         GPIOTypes::GPIOOutputSpeed outputSpeed = GPIOTypes::GPIOOutputSpeed::HIGH; /*!< GPIO output speed, defaults to HIGH*/
+        GPIOTypes::GPIOAf alternateFunction = GPIOTypes::GPIOAf::AF_NONE; /*!< GPIO Alternate function */
     }GPIOInitStruct;
 }
