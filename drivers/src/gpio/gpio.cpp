@@ -94,6 +94,43 @@ static void GPIO_Set_OutputType(GPIOPort port, GPIOPin pin, GPIOOutputType type)
     portVal->OTYPER |= typeVal << pinVal;
 }
 
+/**
+ * @brief Checks if the given GPIO pin supports the given Alternate function
+ * 
+ * @param gpioInitStruct Structure containing GPIO configuration
+ * @return true GPIO pin and AF are compatible
+ * @return false GPIO pin and AF are not compatible
+ */
+static bool GPIO_Is_AF_Valid(GPIO::GPIOInitStruct gpioInitStruct) {
+    uint8_t len = (sizeof(gpioAfValidationTable) / sizeof(gpioAfValidationTable[0]));
+    int8_t afVal = static_cast<int8_t>(gpioInitStruct.alternateFunction);
+    for(uint8_t i = 0; i < len; i++) {
+        if((gpioAfValidationTable[i].port == gpioInitStruct.port) && (gpioAfValidationTable[i].pin == gpioInitStruct.pin)) {
+            return (gpioAfValidationTable[i].afMask & (0x01U << afVal)) != 0;
+        }
+    }
+    return false;
+}
+
+static DriverStatusCode GPIO_Set_AF(GPIO::GPIOInitStruct gpioInitStruct) {
+    if(!GPIO_Is_AF_Valid(gpioInitStruct)) return DriverStatusCode::ERROR_GPIO_AF;
+
+    uint8_t pinVal = static_cast<uint8_t>(gpioInitStruct.pin);
+    GPIO_TypeDef* portVal = gpioPortsList[static_cast<int>(gpioInitStruct.port)];
+    uint8_t afVal = static_cast<int8_t>(gpioInitStruct.alternateFunction);
+
+    //Check which af register to use
+    uint8_t afrIndex = (pinVal > 8) ? 1 : 0;
+    //Check which bits correspond to the given pin
+    uint8_t afrBitsPos = (pinVal % 8) * 4;
+
+    //Set AFR
+    portVal->AFR[afrIndex] &= ~(0xFU << afrBitsPos);
+    portVal->AFR[afrIndex] |= ((afVal & 0xFU) << afrBitsPos);
+
+    return DriverStatusCode::OK;
+}
+
 DriverStatusCode GPIO::GPIO_Init(GPIOInitStruct gpioInitStruct) {
 
     Clock_GPIO_Enable(gpioInitStruct.port);
@@ -106,7 +143,8 @@ DriverStatusCode GPIO::GPIO_Init(GPIOInitStruct gpioInitStruct) {
 
     GPIO_Set_PullUpDown(gpioInitStruct.port, gpioInitStruct.pin, gpioInitStruct.pupPd);
 
-    return DriverStatusCode::OK;
+    DriverStatusCode checkError = GPIO_Set_AF(gpioInitStruct);
+    return checkError;
 }
 
 void GPIO::GPIO_Write(GPIOPort port, GPIOPin pin, GPIOState state) {
