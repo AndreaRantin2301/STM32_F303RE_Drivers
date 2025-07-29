@@ -48,6 +48,17 @@ namespace GPIO {
     * @param pin Pin to toggle
     */
     void GPIO_Toggle(GPIOTypes::GPIOPort port, GPIOTypes::GPIOPin pin);
+
+    /**
+     * @brief Locks a GPIO pin to its configuration until the next reset of the MCU
+     * 
+     * @param port Port of the pin to lock
+     * @param pin Pin to lock
+     * @return DriverStatusCode The status code returned by this function can be:
+     *        - DriverStatusCode::OK If the GPIO pin was locked successfully
+     *        - DriverStatusCode::ERROR_GPIO_LOCK If the GPIO was not locked
+     */
+    DriverStatusCode GPIO_Lock(GPIOTypes::GPIOPort port, GPIOTypes::GPIOPin pin);
 }
 
 
