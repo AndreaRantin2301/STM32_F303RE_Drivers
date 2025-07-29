@@ -179,3 +179,29 @@ void GPIO::GPIO_Toggle(GPIOTypes::GPIOPort port, GPIOTypes::GPIOPin pin) {
     }
 
 }
+
+DriverStatusCode GPIO::GPIO_Lock(GPIOTypes::GPIOPort port, GPIOTypes::GPIOPin pin) {
+    GPIO_TypeDef* portVal = gpioPortsList[static_cast<int>(port)];
+    uint8_t pinVal = static_cast<uint8_t>(pin);
+
+    portVal->LCKR |= (0x01U << pinVal);
+
+    //Write LCKK bit
+    portVal->LCKR |= GPIO_LCKR_LCKK;
+
+    //Clear LCKK bit
+    portVal->LCKR &= GPIO_LCKR_LCKK;
+
+    //Write LCKK bit again
+    portVal->LCKR |= GPIO_LCKR_LCKK;
+
+    //Mandatory read to enforce lock
+    volatile uint32_t readLckk = portVal->LCKR;
+    (void)readLckk;
+
+    
+    if ((portVal->LCKR & GPIO_LCKR_LCKK) == 0) return DriverStatusCode::ERROR_GPIO_LOCK;
+    
+
+    return DriverStatusCode::OK;
+}
