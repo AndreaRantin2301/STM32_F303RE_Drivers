@@ -113,6 +113,7 @@ static bool GPIO_Is_AF_Valid(GPIO::GPIOInitStruct gpioInitStruct) {
 }
 
 static DriverStatusCode GPIO_Set_AF(GPIO::GPIOInitStruct gpioInitStruct) {
+    if(gpioInitStruct.alternateFunction == GPIOAf::AF_NONE) return DriverStatusCode::OK;
     if(!GPIO_Is_AF_Valid(gpioInitStruct)) return DriverStatusCode::ERROR_GPIO_AF;
 
     uint8_t pinVal = static_cast<uint8_t>(gpioInitStruct.pin);
@@ -181,24 +182,27 @@ void GPIO::GPIO_Toggle(GPIOTypes::GPIOPort port, GPIOTypes::GPIOPin pin) {
 }
 
 DriverStatusCode GPIO::GPIO_Lock(GPIOTypes::GPIOPort port, GPIOTypes::GPIOPin pin) {
+
+    RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+    
     GPIO_TypeDef* portVal = gpioPortsList[static_cast<int>(port)];
     uint8_t pinVal = static_cast<uint8_t>(pin);
 
-    portVal->LCKR |= (0x01U << pinVal);
+    uint32_t lockSequence = GPIO_LCKR_LCKK;
+    lockSequence |= (0x01U << pinVal);
 
-    //Write LCKK bit
-    portVal->LCKR |= GPIO_LCKR_LCKK;
+    //Write lock sequence
+    portVal->LCKR = lockSequence;
 
     //Clear LCKK bit
-    portVal->LCKR &= GPIO_LCKR_LCKK;
+    portVal->LCKR = (0x01U << pinVal);
 
-    //Write LCKK bit again
-    portVal->LCKR |= GPIO_LCKR_LCKK;
+    //Write lock sequence again
+    portVal->LCKR = lockSequence;
 
     //Mandatory read to enforce lock
     volatile uint32_t readLckk = portVal->LCKR;
     (void)readLckk;
-
     
     if ((portVal->LCKR & GPIO_LCKR_LCKK) == 0) return DriverStatusCode::ERROR_GPIO_LOCK;
     
