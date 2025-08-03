@@ -10,6 +10,7 @@
 #pragma once
 
 #include "types/gpio_types.hpp"
+#include "types/usart_types.hpp"
 
 namespace ClockPeripheral {
     /**
@@ -25,5 +26,19 @@ namespace ClockPeripheral {
     * @param port GPIO port
     */
     void Clock_GPIO_Disable(GPIOTypes::GPIOPort port);
+
+    /**
+     * @brief Enables the clock for the given USART/UART instance
+     * 
+     * @param instance Instance of USART/UART
+     */
+    void Clock_USART_Enable(USARTTypes::USARTInstance instance);
+
+    /**
+     * @brief Disables the clock for the given USART/UART instance
+     * 
+     * @param instance Instance of USART/UART
+     */
+    void Clock_USART_Disable(USARTTypes::USARTInstance instance);
 }
 

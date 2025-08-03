@@ -104,12 +104,20 @@ typedef struct {
     bool (*isSelectedFunction)(); /*!< Function to check if the clock source is selected */
 }ClockSourceStruct;
 
+/**
+ * @brief System clock source lookup table to ease clock initialization sequence
+ * 
+ */
 static constexpr ClockSourceStruct clockSourceStructTable[] = {
     {RCC_CR_HSION, IS_HSI_READY, RCC_CFGR_SW_HSI, IS_HSI_SELECTED},
     {RCC_CR_HSEON, IS_HSE_READY, RCC_CFGR_SW_HSE, IS_HSE_SELECTED},
     {RCC_CR_HSION, IS_HSI_READY, RCC_CFGR_SW_PLL, IS_PLL_SELECTED},
 };
 
+/**
+ * @brief GPIO clock lookup table
+ * 
+ */
 static constexpr uint32_t gpioClockTable[] = {
     RCC_AHBENR_GPIOAEN,
     RCC_AHBENR_GPIOBEN,
@@ -119,4 +127,16 @@ static constexpr uint32_t gpioClockTable[] = {
     RCC_AHBENR_GPIOFEN,
     RCC_AHBENR_GPIOGEN,
     RCC_AHBENR_GPIOHEN
+};
+
+/**
+ * @brief USART/UART clock lookup table
+ * 
+ */
+static constexpr uint32_t usartClockTable[] = {
+    RCC_APB2ENR_USART1EN,
+    RCC_APB1ENR_USART2EN,
+    RCC_APB1ENR_USART3EN,
+    RCC_APB1ENR_UART4EN,
+    RCC_APB1ENR_UART5EN
 };
